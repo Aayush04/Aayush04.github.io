@@ -1,0 +1,87 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+#quiz-container {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: left; /* Left align the title */
+    color: #333;
+}
+
+#counts {
+    margin-bottom: 20px; /* Space between counts and question */
+}
+
+#counts p {
+    margin: 5px 0;
+    color: #555;
+}
+
+#question {
+    margin-bottom: 20px; /* Space between question and options */
+}
+
+#options {
+    margin-bottom: 20px; /* Space between options and buttons */
+}
+
+button {
+    display: block;
+    margin: 10px 0; /* Space between buttons */
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#button-container {
+    margin-top: 20px; /* Space above the button container */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.option-button {
+    background-color: #5489a3; /* Default option background */
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    padding: 10px; /* Add padding for better click area */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.option-button:hover {
+    background-color: #e0e0e0; /* Change background on hover */
+}
+
+.option-button.selected {
+    background-color: #ff9a00; /* Highlight selected option */
+    color: white; /* Change text color for selected option */
+}
+/* 
+.option-button.correct {
+    background-color: #28a745; /* Green for correct answer */
+    color: white; /* Change text color for correct answer */
+}
+
+.option-button.incorrect {
+    background-color: #dc3545; /* Red for incorrect answer */
+    color: white; /* Change text color for incorrect answer */
+}  */
