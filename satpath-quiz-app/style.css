@@ -10,6 +10,7 @@ body {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    min-width: 300px;
 }
 
 h1 {
@@ -27,7 +28,7 @@ h1 {
 }
 
 #question {
-    margin-bottom: 20px; /* Space between question and options */
+    margin: 20px 0px; /* Space between question and options */
 }
 
 #options {
@@ -39,7 +40,7 @@ button {
     margin: 10px 0; /* Space between buttons */
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #007bff;
+    background-color: #004288;
     color: white;
     border: none;
     border-radius: 5px;
@@ -75,13 +76,48 @@ button:hover {
     background-color: #ff9a00; /* Highlight selected option */
     color: white; /* Change text color for selected option */
 }
-/* 
-.option-button.correct {
-    background-color: #28a745; /* Green for correct answer */
-    color: white; /* Change text color for correct answer */
+
+#navigation-bar1 {
+    margin-top: 20px; /* Space above the navigation bar */
+    display: flex;
+    align-items: center; /* Center items vertically */
 }
 
-.option-button.incorrect {
-    background-color: #dc3545; /* Red for incorrect answer */
-    color: white; /* Change text color for incorrect answer */
-}  */
+#navigation-bar1 > button {
+    margin: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+#scroll-container {
+    width: 180px; /* Fixed width for the scrollable area */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent line breaks */
+}
+
+#question-buttons {
+    display: inline-block; /* Allow buttons to be inline */
+}
+
+.nav-button {
+    margin: 0 5px; /* Space between navigation buttons */
+    padding: 5px 10px; /* Padding for navigation buttons */
+    font-size: 14px; /* Smaller font size for navigation buttons */
+    background-color: #5489a3; /* Default option background */
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-block;
+}
+
+.nav-button:hover {
+    background-color: #e0e0e0; /* Change background on hover */
+}
+
+.nav-button.selected {
+    background-color: #007bff;
+}
+
+#result {
+    margin: 20px 0px;
+}
