@@ -7,27 +7,29 @@ let questions = [];
 let answersMap = {};
 
 // Fetch questions from the JSON file
-fetch('questions.json')
+let p1 = fetch('questions.json')
     .then(response => response.json())
-    .then(data => {
-        questions = data.slice(0,900);
-        document.getElementById('total-questions').textContent = questions.length;
-
-        createNavigationBar(); // Create navigation bar after loading questions
-        showQuestion();
-    })
     .catch(error => console.error('Error loading questions:', error));
 
-fetch('answers.json')
+let p2 = fetch('answers.json')
     .then(response => response.json())
-    .then(data => {
-        answersMap = data;
+    .catch(error => console.error('Error loading answers:', error));
+
+Promise.all([p1, p2])
+    .then(([data1, data2]) => {
+        questions = data1.slice(0,900);
+        document.getElementById('total-questions').textContent = questions.length;
+
+        answersMap = data2;
         questions.forEach((_, index) => {
             let q = questions[index];
             q.answer = answersMap[index];
         });
+
+        createNavigationBar(); // Create navigation bar after loading questions
+        showQuestion();
+
     })
-    .catch(error => console.error('Error loading answers:', error));
 
 function showQuestion() {
     const questionContainer = document.getElementById('question');
