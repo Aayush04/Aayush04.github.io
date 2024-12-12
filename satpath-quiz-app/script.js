@@ -70,25 +70,25 @@ function selectOption(button, selectedOptionText) {
 
     // Check if an option was selected
     if (selectedOption) {
-        if (selectedOption === currentQuestion.answer) {
-            score++;
-            // Highlight the correct answer
-            const correctButton = Array.from(optionButtons).find(btn => btn.textContent === currentQuestion.answer);
-            if (correctButton) {
-                correctButton.classList.add('correct');
-            }
-        } else {
-            // Highlight the incorrect answer
-            const incorrectButton = Array.from(optionButtons).find(btn => btn.textContent === selectedOption);
-            if (incorrectButton) {
-                incorrectButton.classList.add('incorrect');
-            }
-            // Highlight the correct answer
-            const correctButton = Array.from(optionButtons).find(btn => btn.textContent === currentQuestion.answer);
-            if (correctButton) {
-                correctButton.classList.add('correct');
-            }
-        }
+        // if (selectedOption === currentQuestion.answer) {
+        //     score++;
+        //     // Highlight the correct answer
+        //     const correctButton = Array.from(optionButtons).find(btn => btn.textContent === currentQuestion.answer);
+        //     if (correctButton) {
+        //         correctButton.classList.add('correct');
+        //     }
+        // } else {
+        //     // Highlight the incorrect answer
+        //     const incorrectButton = Array.from(optionButtons).find(btn => btn.textContent === selectedOption);
+        //     if (incorrectButton) {
+        //         incorrectButton.classList.add('incorrect');
+        //     }
+        //     // Highlight the correct answer
+        //     const correctButton = Array.from(optionButtons).find(btn => btn.textContent === currentQuestion.answer);
+        //     if (correctButton) {
+        //         correctButton.classList.add('correct');
+        //     }
+        // }
 
         // Show the next button after selecting an option
         document.getElementById('next-button').style.display = 'block';
@@ -216,5 +216,23 @@ function updateNavigationBar() {
         } else {
             break; // Stop if the width exceeds the limit
         }
+    }
 }
+
+function testStorage() {
+
+    alert(localStorage.getItem('question1'))
+    // Storing data
+    localStorage.setItem('question1', 'answer1');
+
+    // Retrieving data
+    // const value = localStorage.getItem('question1');
+
+    // // Removing data
+    // localStorage.removeItem('key');
+
+    // // Clearing all data
+    // localStorage.clear();
 }
+
+testStorage();
