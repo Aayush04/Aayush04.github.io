@@ -4,6 +4,7 @@ let answeredCount = 0;
 let score = 0;
 let skippedCount = 0;
 let questions = [];
+let answersMap = new Map();
 
 // Fetch questions from the JSON file
 fetch('questions.json')
@@ -51,7 +52,7 @@ function showQuestion() {
         showResult();
     }
     highlightButton(currentQuestionIndex);
-    store();
+    // store();
 
     // updateNavigationBar(); // Update the navigation bar after showing the question
 }
@@ -69,6 +70,9 @@ function selectOption(button, selectedOptionText) {
     button.classList.add('selected');
     selectedOption = selectedOptionText; // Store the selected option
 
+    currentQuestion.answer = selectedOptionText;
+
+    answersMap.set(currentQuestionIndex, selectedOptionText);
     // Check if an option was selected
     if (selectedOption) {
         // if (selectedOption === currentQuestion.answer) {
@@ -94,6 +98,8 @@ function selectOption(button, selectedOptionText) {
         // Show the next button after selecting an option
         document.getElementById('next-button').style.display = 'block';
     }
+
+    store({id: currentQuestionIndex, answer: selectedOptionText});
 }
 
 function nextQuestion() {
@@ -220,29 +226,37 @@ function updateNavigationBar() {
     }
 }
 
-function store() {
+function store(questionResponse) {
 
-    const oldData = JSON.parse(localStorage.getItem('data'));
+    let answers = readStore();
 
-    if(oldData) {
-        const test = document.getElementById('test');
-        test.textContent = JSON.stringify(oldData);
-    }
-
-
-    // Storing data
-    const data = {
-        lastIndex: currentQuestionIndex + 1
-    }
-    localStorage.setItem('data', JSON.stringify(data));
-
-    // Retrieving data
-    // const value = localStorage.getItem('question1');
-
-    // // Removing data
-    // localStorage.removeItem('key');
-
-    // // Clearing all data
-    // localStorage.clear();
-
+    answers[questionResponse.id] = questionResponse.answer;
+    console.log(answers);
+    localStorage.setItem('answers', JSON.stringify(answers));
 }
+
+const downloadData = () => {
+
+    const date = new Date();
+    const postFixStr = date.toLocaleDateString().replaceAll('/', "_") + "__" + date.toLocaleTimeString().replaceAll(':', "_");
+    
+    let storeData = readStore();
+    const file1 = new Blob([JSON.stringify(storeData, null, 2)], { type: 'application/json' });
+    // const file1 = new Blob([dataStr], { type: 'text/plain;charset=utf-8' });
+    const fileName1 = "answers-" + postFixStr + ".json";
+    saveAs(file1, fileName1);
+};
+
+function readStore() {
+    let dataStr = localStorage.getItem('answers');
+    let answers;
+    if(!dataStr) {
+        answers = {}
+    } else {
+        answers = JSON.parse(dataStr);
+    }
+
+    return answers;
+}
+
+// readStore();
