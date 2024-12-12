@@ -4,19 +4,30 @@ let answeredCount = 0;
 let score = 0;
 let skippedCount = 0;
 let questions = [];
-let answersMap = new Map();
+let answersMap = {};
 
 // Fetch questions from the JSON file
 fetch('questions.json')
     .then(response => response.json())
     .then(data => {
-        questions = data;
+        questions = data.slice(0,900);
         document.getElementById('total-questions').textContent = questions.length;
 
         createNavigationBar(); // Create navigation bar after loading questions
         showQuestion();
     })
     .catch(error => console.error('Error loading questions:', error));
+
+fetch('answers.json')
+    .then(response => response.json())
+    .then(data => {
+        answersMap = data;
+        questions.forEach((_, index) => {
+            let q = questions[index];
+            q.answer = answersMap[index];
+        });
+    })
+    .catch(error => console.error('Error loading answers:', error));
 
 function showQuestion() {
     const questionContainer = document.getElementById('question');
@@ -64,36 +75,26 @@ function selectOption(button, selectedOptionText) {
 
     // Remove 'selected' class from all option buttons
     const optionButtons = document.querySelectorAll('.option-button');
-    optionButtons.forEach(btn => btn.classList.remove('selected'));
+    optionButtons.forEach(btn => {
+        btn.classList.remove('selected')
+        btn.classList.remove('correct')
+        btn.classList.remove('incorrect')
+    });
 
     // Highlight the selected option
     button.classList.add('selected');
     selectedOption = selectedOptionText; // Store the selected option
 
-    currentQuestion.answer = selectedOptionText;
-
-    answersMap.set(currentQuestionIndex, selectedOptionText);
     // Check if an option was selected
     if (selectedOption) {
-        // if (selectedOption === currentQuestion.answer) {
-        //     score++;
-        //     // Highlight the correct answer
-        //     const correctButton = Array.from(optionButtons).find(btn => btn.textContent === currentQuestion.answer);
-        //     if (correctButton) {
-        //         correctButton.classList.add('correct');
-        //     }
-        // } else {
-        //     // Highlight the incorrect answer
-        //     const incorrectButton = Array.from(optionButtons).find(btn => btn.textContent === selectedOption);
-        //     if (incorrectButton) {
-        //         incorrectButton.classList.add('incorrect');
-        //     }
-        //     // Highlight the correct answer
-        //     const correctButton = Array.from(optionButtons).find(btn => btn.textContent === currentQuestion.answer);
-        //     if (correctButton) {
-        //         correctButton.classList.add('correct');
-        //     }
-        // }
+        if(currentQuestion.answer) {
+            if (selectedOption === currentQuestion.answer) {
+                score++;
+                button.classList.add('correct');
+            } else {
+                button.classList.add('incorrect');
+            }
+        }
 
         // Show the next button after selecting an option
         document.getElementById('next-button').style.display = 'block';
