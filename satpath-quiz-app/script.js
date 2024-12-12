@@ -51,6 +51,7 @@ function showQuestion() {
         showResult();
     }
     highlightButton(currentQuestionIndex);
+    store();
 
     // updateNavigationBar(); // Update the navigation bar after showing the question
 }
@@ -219,11 +220,21 @@ function updateNavigationBar() {
     }
 }
 
-function testStorage() {
+function store() {
 
-    alert(localStorage.getItem('question1'))
+    const oldData = JSON.parse(localStorage.getItem('data'));
+
+    if(oldData) {
+        const test = document.getElementById('test');
+        test.textContent = JSON.stringify(oldData);
+    }
+
+
     // Storing data
-    localStorage.setItem('question1', 'answer1');
+    const data = {
+        lastIndex: currentQuestionIndex + 1
+    }
+    localStorage.setItem('data', JSON.stringify(data));
 
     // Retrieving data
     // const value = localStorage.getItem('question1');
@@ -233,6 +244,5 @@ function testStorage() {
 
     // // Clearing all data
     // localStorage.clear();
-}
 
-testStorage();
+}
