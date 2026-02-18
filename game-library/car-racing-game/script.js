@@ -227,7 +227,7 @@ document.addEventListener('keyup', (e) => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') playerCar.dx = 0;
 });
 
-// Mouse controls for mobile-like experience
+// Mouse controls for desktop
 document.addEventListener('mousemove', (e) => {
     if (gameRunning && !gameOver) {
         const rect = canvas.getBoundingClientRect();
@@ -242,6 +242,39 @@ document.addEventListener('mousemove', (e) => {
         }
     }
 });
+
+// Touch controls for mobile
+canvas.addEventListener('touchstart', (e) => {
+    if (!gameRunning && !gameOver) {
+        gameRunning = true;
+    }
+    handleTouchMove(e);
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    handleTouchMove(e);
+});
+
+canvas.addEventListener('touchend', (e) => {
+    playerCar.dx = 0;
+});
+
+function handleTouchMove(e) {
+    if (!gameRunning || gameOver) return;
+    
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const touchX = touch.clientX - rect.left;
+    
+    if (touchX < playerCar.x) {
+        playerCar.dx = -playerCar.speed;
+    } else if (touchX > playerCar.x + playerCar.width) {
+        playerCar.dx = playerCar.speed;
+    } else {
+        playerCar.dx = 0;
+    }
+}
 
 // Start game loop
 gameLoop();
