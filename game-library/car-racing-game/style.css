@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.game-info {
+    display: flex;
+    gap: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 30px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.info-item {
+    display: flex;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.label {
+    color: #ffd700;
+}
+
+.value {
+    color: #00ff88;
+    min-width: 40px;
+}
+
+#gameCanvas {
+    border: 3px solid #ffd700;
+    background: linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    display: block;
+    cursor: none;
+}
+
+.game-over {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.game-over.show {
+    display: flex;
+}
+
+.game-over-content {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    color: #000;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+.game-over-content h2 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.game-over-content p {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.game-over-content button {
+    background: #0f3460;
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    padding: 12px 30px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.game-over-content button:hover {
+    background: #ffd700;
+    color: #0f3460;
+    transform: scale(1.05);
+}
+
+.controls {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 30px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    font-size: 14px;
+    color: #00ff88;
+}
