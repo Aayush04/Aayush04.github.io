@@ -243,38 +243,58 @@ document.addEventListener('mousemove', (e) => {
     }
 });
 
-// Touch controls for mobile
-canvas.addEventListener('touchstart', (e) => {
-    if (!gameRunning && !gameOver) {
-        gameRunning = true;
-    }
-    handleTouchMove(e);
+// UI Button controls
+const leftBtn = document.getElementById('leftBtn');
+const rightBtn = document.getElementById('rightBtn');
+
+// Start game on button click
+leftBtn.addEventListener('click', () => {
+    if (!gameRunning && !gameOver) gameRunning = true;
 });
 
-canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    handleTouchMove(e);
+rightBtn.addEventListener('click', () => {
+    if (!gameRunning && !gameOver) gameRunning = true;
 });
 
-canvas.addEventListener('touchend', (e) => {
+// Left button handlers
+leftBtn.addEventListener('mousedown', () => {
+    if (gameRunning && !gameOver) playerCar.dx = -playerCar.speed;
+});
+
+leftBtn.addEventListener('mouseup', () => {
     playerCar.dx = 0;
 });
 
-function handleTouchMove(e) {
-    if (!gameRunning || gameOver) return;
-    
-    const touch = e.touches[0];
-    const rect = canvas.getBoundingClientRect();
-    const touchX = touch.clientX - rect.left;
-    
-    if (touchX < playerCar.x) {
-        playerCar.dx = -playerCar.speed;
-    } else if (touchX > playerCar.x + playerCar.width) {
-        playerCar.dx = playerCar.speed;
-    } else {
-        playerCar.dx = 0;
-    }
-}
+leftBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (!gameRunning && !gameOver) gameRunning = true;
+    if (gameRunning && !gameOver) playerCar.dx = -playerCar.speed;
+});
+
+leftBtn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    playerCar.dx = 0;
+});
+
+// Right button handlers
+rightBtn.addEventListener('mousedown', () => {
+    if (gameRunning && !gameOver) playerCar.dx = playerCar.speed;
+});
+
+rightBtn.addEventListener('mouseup', () => {
+    playerCar.dx = 0;
+});
+
+rightBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (!gameRunning && !gameOver) gameRunning = true;
+    if (gameRunning && !gameOver) playerCar.dx = playerCar.speed;
+});
+
+rightBtn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    playerCar.dx = 0;
+});
 
 // Start game loop
 gameLoop();
