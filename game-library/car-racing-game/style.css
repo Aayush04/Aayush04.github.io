@@ -80,8 +80,8 @@ body {
     background: linear-gradient(135deg, #ff6b6b 0%, #cc0000 100%);
     border: 6px solid #ff0000;
     border-radius: 20px;
-    width: 70px;
-    height: 300px;
+    width: 60px;
+    height: 200px;
     cursor: pointer;
     transition: all 0.1s ease;
     box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6), inset 0 -3px 8px rgba(0, 0, 0, 0.3);
