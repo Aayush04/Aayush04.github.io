@@ -23,8 +23,12 @@
             </div>
         </div>
         
-        <div class="game-wrapper">
-            <canvas id="gameCanvas"></canvas>
+        <div class="game-controls-wrapper">
+            <div class="control-button left-btn" id="leftBtn"></div>
+            <div class="game-wrapper">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+            <div class="control-button right-btn" id="rightBtn"></div>
         </div>
         
         <div class="game-over" id="gameOverScreen">
@@ -38,12 +42,6 @@
         <div class="controls">
             <p>🖥️ Desktop: ← → Arrow Keys | 📱 Mobile: Use Left/Right Buttons | SPACE to Start</p>
         </div>
-    </div>
-
-    <!-- Mobile Controller Buttons -->
-    <div class="mobile-controls">
-        <button class="control-btn left-btn" id="leftBtn">◀</button>
-        <button class="control-btn right-btn" id="rightBtn">▶</button>
     </div>
     
     <script src="script.js"></script>

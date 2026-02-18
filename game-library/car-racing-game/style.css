@@ -67,71 +67,63 @@ body {
     z-index: 10;
 }
 
-/* On-screen controller buttons */
-.mobile-controls {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
+.game-controls-wrapper {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    z-index: 100;
-    pointer-events: none;
+    gap: 20px;
+    justify-content: center;
+    z-index: 10;
 }
 
-.control-btn {
-    background: radial-gradient(circle at 30% 30%, #ff6b6b, #cc0000);
-    border: 10px solid #ff0000;
-    border-radius: 50%;
-    font-size: 120px;
-    font-weight: bold;
-    color: #fff;
-    width: 300px;
-    height: 300px;
+/* Control Buttons */
+.control-button {
+    background: linear-gradient(135deg, #ff6b6b 0%, #cc0000 100%);
+    border: 6px solid #ff0000;
+    border-radius: 20px;
+    width: 120px;
+    height: 400px;
     cursor: pointer;
     transition: all 0.1s ease;
-    box-shadow: 0 12px 35px rgba(255, 107, 107, 0.8), inset 0 -3px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6), inset 0 -3px 8px rgba(0, 0, 0, 0.3);
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    pointer-events: all;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.control-btn:hover {
-    background: radial-gradient(circle at 30% 30%, #ff8888, #dd1111);
-    transform: scale(1.08);
-    box-shadow: 0 16px 40px rgba(255, 107, 107, 1), inset 0 -3px 8px rgba(0, 0, 0, 0.4);
+.control-button:hover {
+    background: linear-gradient(135deg, #ff8888 0%, #dd1111 100%);
+    transform: scale(1.05);
+    box-shadow: 0 14px 35px rgba(255, 107, 107, 0.8), inset 0 -3px 8px rgba(0, 0, 0, 0.3);
 }
 
-.control-btn:active {
-    transform: scale(0.92);
-    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.8), inset 0 3px 8px rgba(0, 0, 0, 0.6);
+.control-button:active {
+    transform: scale(0.97);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6), inset 0 3px 8px rgba(0, 0, 0, 0.5);
 }
 
 .left-btn {
-    background: radial-gradient(circle at 30% 30%, #4a90e2, #1e5ba8);
+    background: linear-gradient(135deg, #4a90e2 0%, #1e5ba8 100%);
     border-color: #2196F3;
-    box-shadow: 0 12px 35px rgba(42, 144, 226, 0.8), inset 0 -3px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(42, 144, 226, 0.6), inset 0 -3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .left-btn:hover {
-    background: radial-gradient(circle at 30% 30%, #6ba3e8, #2a6db8);
-    box-shadow: 0 16px 40px rgba(42, 144, 226, 1), inset 0 -3px 8px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, #6ba3e8 0%, #2a6db8 100%);
+    box-shadow: 0 14px 35px rgba(42, 144, 226, 0.8), inset 0 -3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .right-btn {
-    background: radial-gradient(circle at 30% 30%, #e24a4a, #a81e1e);
+    background: linear-gradient(135deg, #e24a4a 0%, #a81e1e 100%);
     border-color: #FF6B6B;
-    box-shadow: 0 12px 35px rgba(226, 74, 74, 0.8), inset 0 -3px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(226, 74, 74, 0.6), inset 0 -3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .right-btn:hover {
-    background: radial-gradient(circle at 30% 30%, #e86262, #b82828);
-    box-shadow: 0 16px 40px rgba(226, 74, 74, 1), inset 0 -3px 8px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, #e86262 0%, #b82828 100%);
+    box-shadow: 0 14px 35px rgba(226, 74, 74, 0.8), inset 0 -3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .game-over {
