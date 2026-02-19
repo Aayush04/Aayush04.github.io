@@ -1,5 +1,6 @@
-const FEED_URL = 'http://feeds.bbci.co.uk/news/rss.xml';
-const PROXY = 'https://api.allorigins.win/raw?url='; // simple CORS proxy
+const FEED_URL = 'https://feeds.bbci.co.uk/news/rss.xml';
+const PRIMARY_PROXY = 'https://api.allorigins.win/raw?url='; // simple CORS proxy (may be unreliable)
+const SECONDARY_PROXY_PREFIX = 'https://r.jina.ai/http://'; // fallback proxy
 const STORAGE_KEY = 'top-news-cache-v1';
 
 function todayStr(){
@@ -8,9 +9,7 @@ function todayStr(){
 
 async function fetchFeed(){
   try{
-    const res = await fetch(PROXY + encodeURIComponent(FEED_URL));
-    if(!res.ok) throw new Error('Network response not ok');
-    const text = await res.text();
+    const text = await fetchWithFallback();
     const doc = new DOMParser().parseFromString(text, 'application/xml');
     const items = Array.from(doc.querySelectorAll('item')).slice(0,5).map(item=>({
       title: item.querySelector('title')?.textContent || '',
@@ -27,7 +26,35 @@ async function fetchFeed(){
     console.error('Fetch error', err);
     const cached = getCache();
     if(cached) render(cached.items);
-    document.getElementById('last-updated').textContent = 'Unable to fetch — showing cached (if any).';
+    const el = document.getElementById('last-updated');
+    if(cached) el.textContent = 'Unable to fetch — showing cached (if any).';
+    else el.textContent = 'Unable to fetch news (no cached data). See console for details.';
+  }
+}
+
+async function fetchWithFallback(){
+  // Try primary proxy first
+  try{
+    const url = PRIMARY_PROXY + encodeURIComponent(FEED_URL);
+    const res = await fetch(url);
+    if(res.ok) return await res.text();
+    throw new Error(`Primary proxy failed: ${res.status} ${res.statusText}`);
+  }catch(primaryErr){
+    console.warn('Primary proxy failed, trying secondary...', primaryErr);
+    // Try secondary proxy (r.jina.ai) — it expects an http:// URL path
+    try{
+      const feedPath = FEED_URL.replace(/^https?:\/\//, '');
+      const url2 = SECONDARY_PROXY_PREFIX + feedPath;
+      const res2 = await fetch(url2);
+      if(res2.ok) return await res2.text();
+      throw new Error(`Secondary proxy failed: ${res2.status} ${res2.statusText}`);
+    }catch(secErr){
+      console.warn('Secondary proxy failed, attempting direct fetch...', secErr);
+      // Last resort: try direct fetch (may be blocked by CORS in browser)
+      const res3 = await fetch(FEED_URL);
+      if(res3.ok) return await res3.text();
+      throw new Error(`Direct fetch failed: ${res3.status} ${res3.statusText}`);
+    }
   }
 }
 
