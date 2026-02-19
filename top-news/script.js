@@ -1,4 +1,5 @@
-const FEED_URL = 'https://feeds.bbci.co.uk/news/rss.xml';
+// Use Google News RSS (top stories). Change locale by editing the query params.
+const FEED_URL = 'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en';
 const PRIMARY_PROXY = 'https://api.allorigins.win/raw?url='; // simple CORS proxy (may be unreliable)
 const SECONDARY_PROXY_PREFIX = 'https://r.jina.ai/http://'; // fallback proxy
 const STORAGE_KEY = 'top-news-cache-v1';
