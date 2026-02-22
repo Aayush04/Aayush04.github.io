@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator with Memory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .calculator {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            width: 350px;
+        }
+
+        .display {
+            width: 100%;
+            height: 80px;
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            text-align: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+
+        .memory-indicator {
+            text-align: right;
+            font-size: 12px;
+            color: #667eea;
+            margin-bottom: 10px;
+            height: 15px;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #fff;
+        }
+
+        button:hover {
+            transform: scale(0.95);
+            opacity: 0.9;
+        }
+
+        button:active {
+            transform: scale(0.9);
+        }
+
+        .number {
+            background: #667eea;
+        }
+
+        .operator {
+            background: #f093fb;
+        }
+
+        .memory {
+            background: #4facfe;
+            font-size: 16px;
+        }
+
+        .clear {
+            background: #fa709a;
+        }
+
+        .equals {
+            background: #30cfd0;
+            grid-column: span 2;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="memory-indicator" id="memoryIndicator"></div>
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <!-- Memory buttons -->
+            <button class="memory" onclick="memoryClear()">MC</button>
+            <button class="memory" onclick="memoryRecall()">MR</button>
+            <button class="memory" onclick="memoryAdd()">M+</button>
+            <button class="memory" onclick="memorySubtract()">M-</button>
+
+            <!-- Number and operator buttons -->
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="setOperator('/')">÷</button>
+
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="setOperator('*')">×</button>
+
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="setOperator('-')">−</button>
+
+            <button class="number zero" onclick="appendNumber('0')">0</button>
+            <button class="number" onclick="appendNumber('.')">.</button>
+            <button class="operator" onclick="setOperator('+')">+</button>
+
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="clear" onclick="backspace()">⌫</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let memoryIndicator = document.getElementById('memoryIndicator');
+        let currentValue = '0';
+        let previousValue = null;
+        let operator = null;
+        let shouldResetDisplay = false;
+        let memory = 0;
+
+        function updateDisplay() {
+            display.textContent = currentValue;
+            updateMemoryIndicator();
+        }
+
+        function updateMemoryIndicator() {
+            if (memory !== 0) {
+                memoryIndicator.textContent = `M: ${memory}`;
+            } else {
+                memoryIndicator.textContent = '';
+            }
+        }
+
+        function appendNumber(num) {
+            if (shouldResetDisplay) {
+                currentValue = num;
+                shouldResetDisplay = false;
+            } else {
+                if (currentValue === '0' && num !== '.') {
+                    currentValue = num;
+                } else if (num === '.' && currentValue.includes('.')) {
+                    return;
+                } else {
+                    currentValue += num;
+                }
+            }
+            updateDisplay();
+        }
+
+        function setOperator(op) {
+            if (operator !== null && !shouldResetDisplay) {
+                calculate();
+            }
+            previousValue = parseFloat(currentValue);
+            operator = op;
+            shouldResetDisplay = true;
+        }
+
+        function calculate() {
+            if (operator === null || previousValue === null) {
+                return;
+            }
+
+            let current = parseFloat(currentValue);
+            let result;
+
+            switch (operator) {
+                case '+':
+                    result = previousValue + current;
+                    break;
+                case '-':
+                    result = previousValue - current;
+                    break;
+                case '*':
+                    result = previousValue * current;
+                    break;
+                case '/':
+                    if (current === 0) {
+                        alert('Cannot divide by zero!');
+                        clearDisplay();
+                        return;
+                    }
+                    result = previousValue / current;
+                    break;
+            }
+
+            currentValue = result.toString();
+            operator = null;
+            previousValue = null;
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentValue = '0';
+            previousValue = null;
+            operator = null;
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (currentValue.length > 1) {
+                currentValue = currentValue.slice(0, -1);
+            } else {
+                currentValue = '0';
+            }
+            updateDisplay();
+        }
+
+        // Memory functions
+        function memoryAdd() {
+            memory += parseFloat(currentValue);
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function memorySubtract() {
+            memory -= parseFloat(currentValue);
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function memoryRecall() {
+            currentValue = memory.toString();
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function memoryClear() {
+            memory = 0;
+            updateDisplay();
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9') {
+                appendNumber(key);
+            } else if (key === '.') {
+                appendNumber('.');
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                setOperator(key);
+            } else if (key === 'Enter' || key === '=') {
+                event.preventDefault();
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                event.preventDefault();
+                backspace();
+            }
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>

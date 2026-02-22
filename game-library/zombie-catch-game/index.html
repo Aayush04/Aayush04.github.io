@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zombie Catch - Survival Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>🧟 ZOMBIE CATCH: SURVIVAL</h1>
+            <p class="tagline">Survive the outbreak in a 50x50 grid city</p>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar left">
+                <div class="panel">
+                    <h2>📊 Game Stats</h2>
+                    <div class="stat-item">
+                        <span>Day:</span>
+                        <span id="day">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Time:</span>
+                        <span id="time">Day</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Survivors:</span>
+                        <span id="survivors">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Infected:</span>
+                        <span id="infected">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Zombies:</span>
+                        <span id="zombies">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Survival Time:</span>
+                        <span id="survivalTime">0s</span>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>🎮 Controls</h2>
+                    <p><strong>Arrow Keys</strong> - Move selected player</p>
+                    <p><strong>Click Player</strong> - Select player</p>
+                    <p><strong>Space</strong> - Pause/Resume</p>
+                    <p><strong>R</strong> - Restart game</p>
+                </div>
+
+                <div class="panel">
+                    <h2>📦 Resources</h2>
+                    <div class="resource-item">
+                        <span>🍖 Food:</span>
+                        <span id="food">100</span>
+                    </div>
+                    <div class="resource-item">
+                        <span>💧 Water:</span>
+                        <span id="water">100</span>
+                    </div>
+                    <div class="resource-item">
+                        <span>🔫 Weapons:</span>
+                        <span id="weapons">10</span>
+                    </div>
+                    <div class="resource-item">
+                        <span>💊 Medicine:</span>
+                        <span id="medicine">5</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <canvas id="gameCanvas"></canvas>
+                <div id="gameMessage" class="game-message"></div>
+            </div>
+
+            <div class="sidebar right">
+                <div class="panel">
+                    <h2>🎯 Selected Player</h2>
+                    <div id="playerInfo" class="player-info">
+                        <p>Click on a player to see details</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>🗺️ Zone Legend</h2>
+                    <div class="legend-item">
+                        <span class="legend-color survivor-block"></span>
+                        <span>Survivor Block (Safe Zone)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color quarantine"></span>
+                        <span>Quarantine Zone</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color liquidation"></span>
+                        <span>Liquidation Point</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color obstacle"></span>
+                        <span>Obstacle (Wall/Building)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color player"></span>
+                        <span>Survivor</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color infected-player"></span>
+                        <span>Infected</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color zombie"></span>
+                        <span>Zombie</span>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>📜 Event Log</h2>
+                    <div id="eventLog" class="event-log"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-bottom">
+            <button id="startBtn" class="btn btn-primary">Start Game</button>
+            <button id="pauseBtn" class="btn btn-secondary" disabled>Pause</button>
+            <button id="restartBtn" class="btn btn-danger">Restart</button>
+            <label class="difficulty-label">
+                Difficulty:
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </label>
+        </div>
+    </div>
+
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <h2>🧟 GAME OVER</h2>
+            <p id="gameOverMessage"></p>
+            <div id="finalStats"></div>
+            <button id="playAgainBtn" class="btn btn-primary">Play Again</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

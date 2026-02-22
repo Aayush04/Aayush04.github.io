@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mukul Enterprises - Agricultural Equipment & Sanitary Fittings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            color: #f39c12;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            font-size: 14px;
+            color: #ecf0f1;
+        }
+
+        .language-toggle {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-left: 20px;
+        }
+
+        .language-toggle:hover {
+            background: #e67e22;
+            transform: scale(1.05);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #f39c12;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(52, 73, 94, 0.8)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%2327ae60" width="1200" height="600"/><path fill="%232ecc71" d="M0 300L50 280L100 320L150 290L200 310L250 285L300 305L350 295L400 315L450 300L500 290L550 310L600 295L650 305L700 290L750 310L800 295L850 305L900 290L950 315L1000 300L1050 310L1100 295L1150 305L1200 290V600H0Z"/></svg>') center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 22px;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #f39c12;
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+        }
+
+        .cta-button:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.6);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Products Section */
+        .products {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+
+        .products h2 {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 50px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .product-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .product-card p {
+            color: #7f8c8d;
+            line-height: 1.8;
+        }
+
+        /* About Section */
+        .about {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about h2 {
+            font-size: 40px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .about p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 20px;
+            background: #ecf0f1;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 50px;
+            color: #2c3e50;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-item .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .feature-item h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .feature-item p {
+            color: #7f8c8d;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+        }
+
+        .contact h2 {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 50px;
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .contact-item {
+            text-align: center;
+        }
+
+        .contact-item .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #f39c12;
+        }
+
+        .contact-item h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #f39c12;
+        }
+
+        .contact-item p {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .contact-item a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-item a:hover {
+            color: #f39c12;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a252f;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 24px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #f39c12;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h2 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .products h2,
+            .about h2,
+            .features h2,
+            .contact h2 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>🏪 Mukul Enterprises</h1>
+                <p data-en="Your Trusted Partner in Agricultural Solutions" data-hi="कृषि समाधान में आपका विश्वसनीय साथी">Your Trusted Partner in Agricultural Solutions</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home" data-en="Home" data-hi="होम">Home</a></li>
+                    <li><a href="#products" data-en="Products" data-hi="उत्पाद">Products</a></li>
+                    <li><a href="#about" data-en="About" data-hi="हमारे बारे में">About</a></li>
+                    <li><a href="#contact" data-en="Contact" data-hi="संपर्क करें">Contact</a></li>
+                    <li><button class="language-toggle" onclick="toggleLanguage()">हिंदी</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h2 data-en="Welcome to Mukul Enterprises" data-hi="मुकुल एंटरप्राइजेज में आपका स्वागत है">Welcome to Mukul Enterprises</h2>
+            <p data-en="Premium Agricultural Equipment & Sanitary Fittings" data-hi="प्रीमियम कृषि उपकरण और सैनिटरी फिटिंग">Premium Agricultural Equipment & Sanitary Fittings</p>
+            <a href="#contact" class="cta-button" data-en="Get in Touch" data-hi="संपर्क करें">Get in Touch</a>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2 data-en="Our Products" data-hi="हमारे उत्पाद">Our Products</h2>
+            <p class="section-subtitle" data-en="Wide Range of Quality Products for All Your Needs" data-hi="आपकी सभी जरूरतों के लिए गुणवत्तापूर्ण उत्पादों की विस्तृत श्रृंखला">Wide Range of Quality Products for All Your Needs</p>
+            
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-icon">🚜</div>
+                    <h3 data-en="Agricultural Equipment" data-hi="कृषि उपकरण">Agricultural Equipment</h3>
+                    <p data-en="Complete range of agricultural machinery and equipment for modern farming solutions." data-hi="आधुनिक खेती के समाधान के लिए कृषि मशीनरी और उपकरणों की संपूर्ण श्रृंखला।">Complete range of agricultural machinery and equipment for modern farming solutions.</p>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">⚙️</div>
+                    <h3 data-en="Engine Parts" data-hi="इंजन पार्ट्स">Engine Parts</h3>
+                    <p data-en="Genuine and high-quality engine parts for various types of motors and machines." data-hi="विभिन्न प्रकार के मोटर और मशीनों के लिए असली और उच्च गुणवत्ता वाले इंजन पार्ट्स।">Genuine and high-quality engine parts for various types of motors and machines.</p>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">🔌</div>
+                    <h3 data-en="Motors" data-hi="मोटर">Motors</h3>
+                    <p data-en="Durable and efficient motors suitable for agricultural and industrial applications." data-hi="कृषि और औद्योगिक अनुप्रयोगों के लिए उपयुक्त टिकाऊ और कुशल मोटर।">Durable and efficient motors suitable for agricultural and industrial applications.</p>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">💧</div>
+                    <h3 data-en="Water Pumps" data-hi="पानी के पंप">Water Pumps</h3>
+                    <p data-en="High-performance water pumps for irrigation and domestic water supply needs." data-hi="सिंचाई और घरेलू पानी की आपूर्ति की जरूरतों के लिए उच्च प्रदर्शन वाले पानी के पंप।">High-performance water pumps for irrigation and domestic water supply needs.</p>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">🔧</div>
+                    <h3 data-en="Pipes & Fittings" data-hi="पाइप और फिटिंग">Pipes & Fittings</h3>
+                    <p data-en="Complete range of pipes and fittings for water supply and irrigation systems." data-hi="पानी की आपूर्ति और सिंचाई प्रणाली के लिए पाइप और फिटिंग की संपूर्ण श्रृंखला।">Complete range of pipes and fittings for water supply and irrigation systems.</p>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-icon">🚿</div>
+                    <h3 data-en="Sanitary Items" data-hi="सैनिटरी सामान">Sanitary Items</h3>
+                    <p data-en="Premium quality sanitary fittings and bathroom accessories for modern homes." data-hi="आधुनिक घरों के लिए प्रीमियम गुणवत्ता वाले सैनिटरी फिटिंग और बाथरूम एक्सेसरीज़।">Premium quality sanitary fittings and bathroom accessories for modern homes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="about-content">
+            <h2 data-en="About Mukul Enterprises" data-hi="मुकुल एंटरप्राइजेज के बारे में">About Mukul Enterprises</h2>
+            <p data-en="Mukul Enterprises is your trusted retail store located in the heart of Chhanera, Madhya Pradesh. We specialize in providing high-quality agricultural equipment, engine parts, motors, pumps, pipes, and sanitary fittings to serve the farming community and local residents." data-hi="मुकुल एंटरप्राइजेज छनेरा, मध्य प्रदेश के केंद्र में स्थित आपका विश्वसनीय रिटेल स्टोर है। हम किसान समुदाय और स्थानीय निवासियों की सेवा के लिए उच्च गुणवत्ता वाले कृषि उपकरण, इंजन पार्ट्स, मोटर, पंप, पाइप और सैनिटरी फिटिंग प्रदान करने में विशेषज्ञ हैं।">
+                Mukul Enterprises is your trusted retail store located in the heart of Chhanera, Madhya Pradesh. 
+                We specialize in providing high-quality agricultural equipment, engine parts, motors, pumps, 
+                pipes, and sanitary fittings to serve the farming community and local residents.
+            </p>
+            <p data-en="With years of experience in the industry, we understand the needs of our customers and strive to deliver the best products at competitive prices. Our commitment to quality and customer satisfaction has made us a preferred choice in the region." data-hi="उद्योग में वर्षों के अनुभव के साथ, हम अपने ग्राहकों की जरूरतों को समझते हैं और प्रतिस्पर्धी कीमतों पर सर्वोत्तम उत्पाद प्रदान करने का प्रयास करते हैं। गुणवत्ता और ग्राहक संतुष्टि के प्रति हमारी प्रतिबद्धता ने हमें क्षेत्र में एक पसंदीदा विकल्प बना दिया है।">
+                With years of experience in the industry, we understand the needs of our customers and strive 
+                to deliver the best products at competitive prices. Our commitment to quality and customer 
+                satisfaction has made us a preferred choice in the region.
+            </p>
+            <p data-en="Whether you're a farmer looking for reliable agricultural equipment or a homeowner in need of sanitary fittings, Mukul Enterprises is here to serve you with dedication and expertise." data-hi="चाहे आप विश्वसनीय कृषि उपकरण की तलाश में एक किसान हों या सैनिटरी फिटिंग की आवश्यकता वाले गृहस्वामी हों, मुकुल एंटरप्राइजेज समर्पण और विशेषज्ञता के साथ आपकी सेवा के लिए यहां हैं।">
+                Whether you're a farmer looking for reliable agricultural equipment or a homeowner in need of 
+                sanitary fittings, Mukul Enterprises is here to serve you with dedication and expertise.
+            </p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 data-en="Why Choose Us?" data-hi="हमें क्यों चुनें?">Why Choose Us?</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="icon">✅</div>
+                    <h3 data-en="Quality Products" data-hi="गुणवत्तापूर्ण उत्पाद">Quality Products</h3>
+                    <p data-en="We offer only genuine and high-quality products from trusted brands." data-hi="हम केवल विश्वसनीय ब्रांडों से असली और उच्च गुणवत्ता वाले उत्पाद प्रदान करते हैं।">We offer only genuine and high-quality products from trusted brands.</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="icon">💰</div>
+                    <h3 data-en="Competitive Prices" data-hi="प्रतिस्पर्धी कीमतें">Competitive Prices</h3>
+                    <p data-en="Best prices in the market with special discounts for bulk orders." data-hi="थोक ऑर्डर के लिए विशेष छूट के साथ बाजार में सर्वोत्तम कीमतें।">Best prices in the market with special discounts for bulk orders.</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="icon">🤝</div>
+                    <h3 data-en="Expert Guidance" data-hi="विशेषज्ञ मार्गदर्शन">Expert Guidance</h3>
+                    <p data-en="Our experienced team provides expert advice for all your requirements." data-hi="हमारी अनुभवी टीम आपकी सभी आवश्यकताओं के लिए विशेषज्ञ सलाह प्रदान करती है।">Our experienced team provides expert advice for all your requirements.</p>
+                </div>
+
+                <div class="feature-item">
+                    <div class="icon">⚡</div>
+                    <h3 data-en="Quick Service" data-hi="त्वरित सेवा">Quick Service</h3>
+                    <p data-en="Fast and efficient service to meet your urgent needs." data-hi="आपकी तत्काल आवश्यकताओं को पूरा करने के लिए तेज़ और कुशल सेवा।">Fast and efficient service to meet your urgent needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 data-en="Contact Us" data-hi="संपर्क करें">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-item">
+                    <div class="icon">📍</div>
+                    <h3 data-en="Visit Us" data-hi="हमसे मिलें">Visit Us</h3>
+                    <p>
+                        Mukul Enterprises<br>
+                        <span data-en="Main Road, Chhanera" data-hi="मेन रोड, छनेरा">Main Road, Chhanera</span><br>
+                        <span data-en="Madhya Pradesh, India" data-hi="मध्य प्रदेश, भारत">Madhya Pradesh, India</span>
+                    </p>
+                </div>
+
+                <div class="contact-item">
+                    <div class="icon">📞</div>
+                    <h3 data-en="Call Us" data-hi="फोन करें">Call Us</h3>
+                    <p>
+                        <span data-en="Phone" data-hi="फोन">Phone</span>: <a href="tel:+91XXXXXXXXXX">+91-XXXXX-XXXXX</a><br>
+                        <span data-en="Mobile" data-hi="मोबाइल">Mobile</span>: <a href="tel:+91XXXXXXXXXX">+91-XXXXX-XXXXX</a>
+                    </p>
+                </div>
+
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <h3 data-en="Business Hours" data-hi="व्यापार समय">Business Hours</h3>
+                    <p>
+                        <span data-en="Monday - Saturday" data-hi="सोमवार - शनिवार">Monday - Saturday</span><br>
+                        <span data-en="9:00 AM - 7:00 PM" data-hi="सुबह 9:00 बजे - शाम 7:00 बजे">9:00 AM - 7:00 PM</span><br>
+                        <span data-en="Sunday: Closed" data-hi="रविवार: बंद">Sunday: Closed</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p data-en="&copy; 2026 Mukul Enterprises. All Rights Reserved." data-hi="&copy; 2026 मुकुल एंटरप्राइजेज। सर्वाधिकार सुरक्षित।">&copy; 2026 Mukul Enterprises. All Rights Reserved.</p>
+            <p data-en="Main Road, Chhanera, Madhya Pradesh" data-hi="मेन रोड, छनेरा, मध्य प्रदेश">Main Road, Chhanera, Madhya Pradesh</p>
+            <div class="social-links">
+                <a href="#" title="Facebook">📘</a>
+                <a href="#" title="WhatsApp">💬</a>
+                <a href="#" title="Instagram">📷</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language toggle functionality
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'hi' : 'en';
+            const langButton = document.querySelector('.language-toggle');
+            langButton.textContent = currentLang === 'en' ? 'हिंदी' : 'English';
+            
+            // Update all elements with language data
+            document.querySelectorAll('[data-en][data-hi]').forEach(element => {
+                const text = element.getAttribute(`data-${currentLang}`);
+                if (element.tagName === 'A' || element.tagName === 'BUTTON' || element.tagName === 'SPAN' || element.tagName === 'P' || element.tagName === 'H1' || element.tagName === 'H2' || element.tagName === 'H3') {
+                    element.textContent = text;
+                } else {
+                    element.innerHTML = text;
+                }
+            });
+            
+            // Save preference
+            localStorage.setItem('preferredLanguage', currentLang);
+        }
+
+        // Load saved language preference
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferredLanguage');
+            if (savedLang && savedLang !== currentLang) {
+                toggleLanguage();
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to header
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                header.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all product cards and feature items
+        document.querySelectorAll('.product-card, .feature-item, .contact-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

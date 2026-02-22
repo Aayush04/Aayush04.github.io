@@ -1,0 +1,568 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a1929 0%, #1a237e 50%, #00acc1 100%);
+    color: white;
+    overflow: hidden;
+    height: 100vh;
+}
+
+#game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+/* Header */
+#game-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    border-bottom: 3px solid #00e5ff;
+}
+
+.header-left h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: #00e5ff;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+#time-mode {
+    font-size: 14px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.day-mode {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #000;
+}
+
+.night-mode {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(16, 213, 194, 0.5);
+}
+
+.header-right {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.stat-box .label {
+    margin-right: 8px;
+    opacity: 0.8;
+}
+
+/* Menu Screens */
+.menu-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    z-index: 50;
+}
+
+.menu-content {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    border-radius: 20px;
+    border: 3px solid #00e5ff;
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
+    min-width: 500px;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.menu-content h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #00e5ff;
+    text-shadow: 0 0 15px rgba(0, 229, 255, 0.7);
+}
+
+.menu-subtitle {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #10d5c2;
+}
+
+.menu-btn {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #0091ea, #00e5ff);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3);
+}
+
+.menu-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 229, 255, 0.5);
+    background: linear-gradient(135deg, #00b0ff, #00e5ff);
+}
+
+.menu-btn:active {
+    transform: translateY(-1px);
+}
+
+.back-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Garage Screen */
+#current-car-info {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+#car-name {
+    font-size: 24px;
+    color: #10d5c2;
+    margin-bottom: 15px;
+}
+
+.car-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stat-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-bar span:first-child {
+    width: 120px;
+    font-weight: bold;
+}
+
+.stat-bar span:last-child {
+    width: 50px;
+    text-align: right;
+    color: #00e5ff;
+    font-weight: bold;
+}
+
+.bar {
+    flex: 1;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10d5c2, #00ff88);
+    transition: width 0.5s;
+    box-shadow: 0 0 10px rgba(16, 213, 194, 0.5);
+}
+
+/* Upgrades */
+#upgrade-options h3 {
+    margin: 20px 0 10px 0;
+    color: #00e5ff;
+}
+
+.upgrade-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.upgrade-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 15px;
+    background: rgba(16, 213, 194, 0.1);
+    border: 2px solid #10d5c2;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.upgrade-btn:hover {
+    background: rgba(16, 213, 194, 0.2);
+    transform: scale(1.05);
+}
+
+.upgrade-btn .price {
+    color: #00e5ff;
+    font-weight: bold;
+}
+
+.car-shop {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.car-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(0, 229, 255, 0.1);
+    border: 2px solid #00e5ff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.car-card:hover {
+    background: rgba(0, 229, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.car-card .car-info {
+    flex: 1;
+}
+
+.car-card .car-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #10d5c2;
+}
+
+.car-card .car-specs {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 5px;
+}
+
+.car-card .car-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00e5ff;
+}
+
+/* Controls Screen */
+.controls-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.control-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 4px solid #00e5ff;
+}
+
+.key {
+    padding: 8px 15px;
+    background: rgba(0, 229, 255, 0.2);
+    border: 2px solid #00e5ff;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #00e5ff;
+}
+
+/* Race Screen */
+#race-screen {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#game-canvas {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #87ceeb 0%, #e0e0e0 70%, #505050 100%);
+}
+
+/* Race HUD */
+#race-hud {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.hud-top {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px;
+}
+
+.hud-item {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px 20px;
+    border-radius: 10px;
+    border: 2px solid rgba(0, 229, 255, 0.5);
+}
+
+.hud-item.center {
+    text-align: center;
+}
+
+/* Speedometer */
+.speedometer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.speed-value {
+    font-size: 48px;
+    font-weight: bold;
+    color: #00e5ff;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+    line-height: 1;
+}
+
+.speed-unit {
+    font-size: 14px;
+    color: #10d5c2;
+    margin-top: 5px;
+}
+
+#lap-counter {
+    font-size: 20px;
+    font-weight: bold;
+    color: #10d5c2;
+}
+
+#race-timer {
+    font-size: 24px;
+    color: #00e5ff;
+    margin-top: 5px;
+}
+
+/* Nitrous Bar */
+.nitrous-bar {
+    min-width: 200px;
+}
+
+.nitrous-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #00e5ff;
+    margin-bottom: 8px;
+}
+
+.nitrous-fill {
+    background: linear-gradient(90deg, #0091ea, #00e5ff);
+}
+
+/* HUD Bottom */
+.hud-bottom {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+#position-display {
+    font-size: 32px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 30px;
+    border-radius: 10px;
+    border: 3px solid #00e5ff;
+    color: #00e5ff;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+}
+
+#warning-message {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #ff3333;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+}
+
+/* Police Warning */
+#police-warning {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 0, 0, 0.9);
+    padding: 20px 40px;
+    border-radius: 15px;
+    border: 4px solid #ff0000;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    animation: pulse 1s infinite;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+}
+
+#heat-level {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #ffff00;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Minimap */
+#minimap {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #00e5ff;
+}
+
+#minimap-canvas {
+    display: block;
+}
+
+/* Results Screen */
+.results-info {
+    margin: 30px 0;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    margin: 10px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.result-item span:first-child {
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+.result-item span:last-child {
+    font-weight: bold;
+}
+
+.green {
+    color: #00ff88;
+}
+
+.blue {
+    color: #10d5c2;
+}
+
+.red {
+    color: #ff3333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .menu-content {
+        min-width: 90vw;
+        padding: 20px;
+    }
+
+    .upgrade-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hud-top {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .speed-value {
+        font-size: 32px;
+    }
+}
+
+/* Scrollbar */
+.menu-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.menu-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.menu-content::-webkit-scrollbar-thumb {
+    background: #00e5ff;
+    border-radius: 10px;
+}
+
+.menu-content::-webkit-scrollbar-thumb:hover {
+    background: #00b0ff;
+}

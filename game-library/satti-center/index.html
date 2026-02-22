@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satti Center - Satte pe Satta</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🃏 Satti Center</h1>
+            <p class="subtitle">Satte pe Satta (Sevens)</p>
+        </header>
+
+        <div class="game-info">
+            <div class="info-item">
+                <span class="label">Current Player:</span>
+                <span id="current-player" class="value">Player 1</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Cards Remaining:</span>
+                <span id="cards-remaining" class="value">7</span>
+            </div>
+        </div>
+
+        <div class="game-board">
+            <div class="suits-container">
+                <!-- Hearts -->
+                <div class="suit-row" data-suit="hearts">
+                    <div class="suit-label">♥️</div>
+                    <div class="card-stack" id="hearts-stack"></div>
+                </div>
+
+                <!-- Diamonds -->
+                <div class="suit-row" data-suit="diamonds">
+                    <div class="suit-label">♦️</div>
+                    <div class="card-stack" id="diamonds-stack"></div>
+                </div>
+
+                <!-- Clubs -->
+                <div class="suit-row" data-suit="clubs">
+                    <div class="suit-label">♣️</div>
+                    <div class="card-stack" id="clubs-stack"></div>
+                </div>
+
+                <!-- Spades -->
+                <div class="suit-row" data-suit="spades">
+                    <div class="suit-label">♠️</div>
+                    <div class="card-stack" id="spades-stack"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="player-hand">
+            <h3>Your Hand</h3>
+            <div id="hand-cards" class="hand-cards"></div>
+            <button id="pass-turn" class="btn-pass">Pass Turn</button>
+        </div>
+
+        <div class="instructions">
+            <h4>How to Play:</h4>
+            <ul>
+                <li>Game starts with all 7s being played first</li>
+                <li>Play cards in sequence: 6-5-4-3-2-A (descending) or 8-9-10-J-Q-K (ascending)</li>
+                <li>Click on a card in your hand to play it</li>
+                <li>If you can't play, pass your turn</li>
+                <li>First player to finish all cards wins!</li>
+            </ul>
+        </div>
+
+        <button id="new-game" class="btn-new-game">New Game</button>
+    </div>
+
+    <div id="winner-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>🎉 Game Over!</h2>
+            <p id="winner-text"></p>
+            <button id="play-again" class="btn-play-again">Play Again</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

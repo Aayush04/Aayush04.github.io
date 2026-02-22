@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor Pump Shop Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Motor Pump Shop Management</h1>
+            <div class="header-info">
+                <span id="currentDate"></span>
+                <span id="shopName">Your Shop Name</span>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-button active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="tab-button" onclick="showTab('inventory')">Inventory</button>
+            <button class="tab-button" onclick="showTab('billing')">Billing</button>
+            <button class="tab-button" onclick="showTab('customers')">Customers</button>
+            <button class="tab-button" onclick="showTab('reports')">Reports</button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <h2>Dashboard</h2>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Total Items</h3>
+                    <p class="stat" id="totalItems">0</p>
+                </div>
+                <div class="card">
+                    <h3>Low Stock Items</h3>
+                    <p class="stat warning" id="lowStockItems">0</p>
+                </div>
+                <div class="card">
+                    <h3>Today's Sales</h3>
+                    <p class="stat" id="todaySales">₹0</p>
+                </div>
+                <div class="card">
+                    <h3>Total Customers</h3>
+                    <p class="stat" id="totalCustomers">0</p>
+                </div>
+            </div>
+
+            <div class="alerts">
+                <h3>⚠️ Low Stock Alerts</h3>
+                <div id="lowStockAlerts"></div>
+            </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content">
+            <h2>Inventory Management</h2>
+            
+            <div class="section voice-section">
+                <h3>🎤 Add Item by Voice</h3>
+                <div class="voice-container">
+                    <button type="button" id="voiceButton" class="btn btn-voice" onclick="startVoiceInput()">
+                        <span id="voiceIcon">🎤</span> Start Voice Input
+                    </button>
+                    <div id="voiceStatus" class="voice-status"></div>
+                    <div id="voiceTranscript" class="voice-transcript"></div>
+                    <div class="voice-instructions">
+                        <p><strong>📝 How to use:</strong> Click the microphone and speak naturally. Example:</p>
+                        <p><em>"Add motor pump Kirloskar model 1HP quantity 5 purchase price 5000 selling price 7000 minimum stock 2"</em></p>
+                        <p><em>"Add spare parts impeller quantity 10 price 500 selling 800 minimum 3"</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>➕ Add Item Manually (Quick Form)</h3>
+                <form id="addItemForm" class="simple-form">
+                    <div class="form-row">
+                        <input type="text" id="itemName" placeholder="Item Name (e.g., 1HP Submersible Pump)*" required>
+                        <select id="itemCategory" required>
+                            <option value="">Category*</option>
+                            <option value="Motor Pump">Motor Pump</option>
+                            <option value="Spare Parts">Spare Parts</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Tools">Tools</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="itemBrand" placeholder="Brand (Optional)">
+                        <input type="text" id="itemModel" placeholder="Model (Optional)">
+                    </div>
+                    <div class="form-row">
+                        <input type="number" id="itemQuantity" placeholder="Quantity*" required min="0" value="1">
+                        <input type="number" id="itemMinStock" placeholder="Min Stock*" required min="0" value="1">
+                    </div>
+                    <div class="form-row">
+                        <input type="number" id="itemPrice" placeholder="Purchase Price*" required min="0" step="0.01">
+                        <input type="number" id="itemSellingPrice" placeholder="Selling Price*" required min="0" step="0.01">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-large">➕ Add Item to Inventory</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h3>Current Stock</h3>
+                <input type="text" id="searchInventory" placeholder="🔍 Search inventory..." class="search-box">
+                <div class="table-container">
+                    <table id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Quantity</th>
+                                <th>Purchase Price</th>
+                                <th>Selling Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing Tab -->
+        <div id="billing" class="tab-content">
+            <h2>Create Bill</h2>
+            
+            <div class="billing-container">
+                <div class="billing-form">
+                    <h3>Customer Details</h3>
+                    <div class="form-grid">
+                        <input type="text" id="customerName" placeholder="Customer Name" required>
+                        <input type="text" id="customerPhone" placeholder="Phone Number" required>
+                        <input type="text" id="customerAddress" placeholder="Address">
+                    </div>
+
+                    <h3>Add Items</h3>
+                    <div class="form-grid">
+                        <select id="billItemSelect" required>
+                            <option value="">Select Item</option>
+                        </select>
+                        <input type="number" id="billQuantity" placeholder="Quantity" min="1" required>
+                        <button type="button" class="btn btn-secondary" onclick="addItemToBill()">Add to Bill</button>
+                    </div>
+
+                    <div class="bill-items">
+                        <h3>Bill Items</h3>
+                        <table id="billItemsTable">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="billItemsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="bill-total">
+                        <div class="discount-section">
+                            <label>Discount (%):</label>
+                            <input type="number" id="discountPercent" value="0" min="0" max="100" step="0.1" onchange="calculateBillTotal()">
+                        </div>
+                        <h3>Subtotal: ₹<span id="billSubtotal">0.00</span></h3>
+                        <h3>Discount: ₹<span id="billDiscount">0.00</span></h3>
+                        <h2>Total: ₹<span id="billTotal">0.00</span></h2>
+                        <button class="btn btn-primary btn-large" onclick="generateBill()">Generate Bill</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers Tab -->
+        <div id="customers" class="tab-content">
+            <h2>Customer Management</h2>
+            <input type="text" id="searchCustomers" placeholder="🔍 Search customers..." class="search-box">
+            <div class="table-container">
+                <table id="customersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Total Purchases</th>
+                            <th>Last Purchase</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <h2>Sales Reports</h2>
+            
+            <div class="report-filters">
+                <label>From:</label>
+                <input type="date" id="reportFromDate">
+                <label>To:</label>
+                <input type="date" id="reportToDate">
+                <button class="btn btn-secondary" onclick="filterReports()">Filter</button>
+            </div>
+
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Total Sales</h3>
+                    <p class="stat" id="reportTotalSales">₹0</p>
+                </div>
+                <div class="card">
+                    <h3>Total Bills</h3>
+                    <p class="stat" id="reportTotalBills">0</p>
+                </div>
+                <div class="card">
+                    <h3>Total Profit</h3>
+                    <p class="stat success" id="reportTotalProfit">₹0</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3>Sales History</h3>
+                <table id="salesTable">
+                    <thead>
+                        <tr>
+                            <th>Bill No.</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bill Print Modal -->
+    <div id="billModal" class="modal">
+        <div class="modal-content bill-print">
+            <span class="close" onclick="closeBillModal()">&times;</span>
+            <div id="billPrint"></div>
+            <button class="btn btn-primary" onclick="printBill()">Print Bill</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
