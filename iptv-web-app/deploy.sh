@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+APP_DIR="$SCRIPT_DIR"
 
-echo "Building iptv-web-app in $ROOT_DIR/iptv-web-app"
-cd "$ROOT_DIR/iptv-web-app"
+echo "Building iptv-web-app in $APP_DIR"
+cd "$APP_DIR"
 
 echo "Installing dependencies..."
 if command -v pnpm >/dev/null 2>&1; then
@@ -17,15 +19,15 @@ else
   npm run build
 fi
 
-BUILD_DIR="$ROOT_DIR/iptv-web-app/dist"
+BUILD_DIR="$APP_DIR/dist"
 if [ ! -d "$BUILD_DIR" ]; then
   echo "Build output not found at $BUILD_DIR"
   exit 1
 fi
 
-echo "Copying build to $ROOT_DIR/docs/"
-rm -rf "$ROOT_DIR/docs"
-mkdir -p "$ROOT_DIR/docs"
-cp -r "$BUILD_DIR/." "$ROOT_DIR/docs/"
+echo "Copying build to $REPO_ROOT/iptv-app/"
+rm -rf "$REPO_ROOT/iptv-app"
+mkdir -p "$REPO_ROOT/iptv-app"
+cp -r "$BUILD_DIR/." "$REPO_ROOT/iptv-app/"
 
 echo "Build copied to docs/. Ready for commit and publish."
