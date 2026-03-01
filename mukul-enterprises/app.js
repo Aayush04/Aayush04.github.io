@@ -159,11 +159,28 @@ filterTabs.forEach((tab) => {
 const form         = document.getElementById("contactForm");
 const formSuccess  = document.getElementById("formSuccess");
 
-function showError(inputId, errorId, message) {
+// localized validation messages
+const errorTexts = {
+  name: {
+    en: "Please enter your full name.",
+    hi: "कृपया अपना पूरा नाम दर्ज करें।"
+  },
+  phone: {
+    en: "Please enter a valid 10-digit mobile number.",
+    hi: "कृपया एक मान्य 10-अंकीय मोबाइल नंबर दर्ज करें।"
+  },
+  message: {
+    en: "Please describe your requirement (min. 10 characters).",
+    hi: "कृपया अपनी आवश्यकता का वर्णन करें (न्यूनतम 10 वर्ण)।"
+  }
+};
+
+function showError(inputId, errorId, key) {
   const input = document.getElementById(inputId);
   const error = document.getElementById(errorId);
   input.classList.add("error");
-  error.textContent = message;
+  const msgObj = errorTexts[key] || {};
+  error.textContent = msgObj[currentLang] || msgObj.en || "";
   return false;
 }
 
@@ -196,17 +213,17 @@ form.addEventListener("submit", (e) => {
   clearError("message", "messageError");
 
   if (!name || name.length < 2) {
-    showError("name", "nameError", "Please enter your full name.");
+    showError("name", "nameError", "name");
     valid = false;
   }
 
   if (!phone || !/^[6-9]\d{9}$/.test(phone.replace(/[\s\-+]/g, "").replace(/^91/, ""))) {
-    showError("phone", "phoneError", "Please enter a valid 10-digit mobile number.");
+    showError("phone", "phoneError", "phone");
     valid = false;
   }
 
   if (!message || message.length < 10) {
-    showError("message", "messageError", "Please describe your requirement (min. 10 characters).");
+    showError("message", "messageError", "message");
     valid = false;
   }
 
@@ -259,3 +276,52 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+/* ─── Language switcher ───────────────────────────────────── */
+const langToggle = document.getElementById("langToggle");
+let currentLang = localStorage.getItem("lang") || "en";
+
+function updateLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("lang", lang);
+  // update toggle button label/text
+  if (langToggle) {
+    if (lang === "hi") {
+      langToggle.textContent = "EN";
+      langToggle.classList.add("active");
+      langToggle.setAttribute("aria-label", "Switch to English");
+    } else {
+      langToggle.textContent = "हिंदी";
+      langToggle.classList.remove("active");
+      langToggle.setAttribute("aria-label", "हिंदी में बदलें");
+    }
+  }
+
+  document.documentElement.lang = lang === "hi" ? "hi" : "en";
+
+  // translate text nodes
+  document.querySelectorAll("[data-en]").forEach((el) => {
+    const key = lang === "hi" ? "data-hi" : "data-en";
+    const val = el.getAttribute(key);
+    if (val != null) el.innerHTML = val;
+  });
+  document.querySelectorAll("[data-en-placeholder]").forEach((el) => {
+    const key = lang === "hi" ? "data-hi-placeholder" : "data-en-placeholder";
+    const val = el.getAttribute(key);
+    if (val != null) el.placeholder = val;
+  });
+  document.querySelectorAll("[data-en-alt]").forEach((el) => {
+    const key = lang === "hi" ? "data-hi-alt" : "data-en-alt";
+    const val = el.getAttribute(key);
+    if (val != null) el.alt = val;
+  });
+}
+
+if (langToggle) {
+  langToggle.addEventListener("click", () => {
+    updateLanguage(currentLang === "en" ? "hi" : "en");
+  });
+}
+
+// apply initial language settings
+updateLanguage(currentLang);

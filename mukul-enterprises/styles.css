@@ -85,6 +85,25 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 .topbar__right a:hover { color: var(--primary-light); }
 
+/* language toggle button */
+.lang-btn {
+  color: #adb5bd;
+  background: transparent;
+  border: 1px solid #adb5bd;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  transition: var(--transition);
+}
+.lang-btn:hover {
+  color: var(--primary-light);
+  border-color: var(--primary-light);
+}
+.lang-btn.active {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
 /* ============================================================
    NAVBAR
    ============================================================ */
