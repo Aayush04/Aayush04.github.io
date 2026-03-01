@@ -39,6 +39,8 @@
       <a href="#brands" data-en="Brands" data-hi="ब्रांड">Brands</a>
       <a href="#why-us" data-en="Why Us" data-hi="क्यों हमें">Why Us</a>
       <a href="#contact" class="btn btn--nav" data-en="Contact Us" data-hi="हमसे संपर्क करें">Contact Us</a>
+      <!-- mobile lang toggle (appears when topbar is hidden) -->
+      <button id="langToggleNav" class="lang-btn">हिंदी</button>
     </nav>
     <button class="hamburger" id="hamburger" aria-label="Open menu">
       <span></span><span></span><span></span>
@@ -56,11 +58,18 @@
     <div class="hero__dealer-badges">
       <div class="dealer-badge-logo dealer-badge-logo--lubi">
         <img src="lubi.svg" alt="Lubi Pumps" />
-        <span data-en="<i class=\"fa-solid fa-certificate\"></i> Authorised Dealer" data-hi="<i class=\"fa-solid fa-certificate\"></i> आधिकारिक डीलर"><i class="fa-solid fa-certificate"></i> Authorised Dealer</span>
+        <!-- icon is static; only the text inside the nested span is translated -->
+        <span class="badge-text">
+          <i class="fa-solid fa-certificate"></i>
+          <span data-en="Authorised Dealer" data-hi="आधिकारिक डीलर">Authorised Dealer</span>
+        </span>
       </div>
       <div class="dealer-badge-logo dealer-badge-logo--supreme">
         <img src="supreme.png" alt="Supreme Industries" />
-        <span data-en="<i class=\"fa-solid fa-certificate\"></i> Authorised Dealer" data-hi="<i class=\"fa-solid fa-certificate\"></i> आधिकारिक डीलर"><i class="fa-solid fa-certificate"></i> Authorised Dealer</span>
+        <span class="badge-text">
+          <i class="fa-solid fa-certificate"></i>
+          <span data-en="Authorised Dealer" data-hi="आधिकारिक डीलर">Authorised Dealer</span>
+        </span>
       </div>
     </div>
     <div class="hero__actions">

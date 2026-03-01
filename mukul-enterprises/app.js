@@ -278,28 +278,30 @@ style.textContent = `
 document.head.appendChild(style);
 
 /* ─── Language switcher ───────────────────────────────────── */
-const langToggle = document.getElementById("langToggle");
+// search for any language toggle buttons (topbar, nav, etc.)
+const langToggles = document.querySelectorAll(".lang-btn");
 let currentLang = localStorage.getItem("lang") || "en";
 
 function updateLanguage(lang) {
   currentLang = lang;
   localStorage.setItem("lang", lang);
-  // update toggle button label/text
-  if (langToggle) {
+
+  // update every toggle button's label
+  langToggles.forEach((btn) => {
     if (lang === "hi") {
-      langToggle.textContent = "EN";
-      langToggle.classList.add("active");
-      langToggle.setAttribute("aria-label", "Switch to English");
+      btn.textContent = "EN";
+      btn.classList.add("active");
+      btn.setAttribute("aria-label", "Switch to English");
     } else {
-      langToggle.textContent = "हिंदी";
-      langToggle.classList.remove("active");
-      langToggle.setAttribute("aria-label", "हिंदी में बदलें");
+      btn.textContent = "हिंदी";
+      btn.classList.remove("active");
+      btn.setAttribute("aria-label", "हिंदी में बदलें");
     }
-  }
+  });
 
   document.documentElement.lang = lang === "hi" ? "hi" : "en";
 
-  // translate text nodes
+  // translate text nodes (plain strings only)
   document.querySelectorAll("[data-en]").forEach((el) => {
     const key = lang === "hi" ? "data-hi" : "data-en";
     const val = el.getAttribute(key);
@@ -317,11 +319,12 @@ function updateLanguage(lang) {
   });
 }
 
-if (langToggle) {
-  langToggle.addEventListener("click", () => {
+// hook up click listeners on all toggles
+langToggles.forEach((btn) => {
+  btn.addEventListener("click", () => {
     updateLanguage(currentLang === "en" ? "hi" : "en");
   });
-}
+});
 
 // apply initial language settings
 updateLanguage(currentLang);

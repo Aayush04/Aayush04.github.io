@@ -1314,13 +1314,19 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   display: block;
 }
 
-.dealer-badge-logo span {
+/* text portion of badge; icon sits outside so only the label is translated */
+.dealer-badge-logo .badge-text {
   font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
+
+/* color rules for icon and text already scoped by previous selectors */
 
 /* ============================================================
    ABOUT – AUTHORISED DEALER STRIP
@@ -1569,6 +1575,18 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
     z-index: 900;
   }
 
+  /* show language toggle inside nav when topbar hidden */
+  .nav__links .lang-btn {
+    display: block;
+    margin-top: 12px;
+    align-self: start;
+  }
+}
+
+/* hide the nav toggle on larger screens since it's in the topbar there */
+.nav__links .lang-btn {
+  display: none;
+}
   .nav__links.open {
     transform: translateY(0);
     opacity: 1;
