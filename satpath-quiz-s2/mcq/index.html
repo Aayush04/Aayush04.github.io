@@ -32,18 +32,23 @@
       flex-direction: column;
       align-items: center;
       padding: 24px 16px 60px;
+      padding-top: 16px;
     }
 
     /* ── Header ── */
     header {
       width: 100%;
-      max-width: 740px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 28px;
       gap: 12px;
       flex-wrap: wrap;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 2px solid var(--surface2);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
     header h1 {
       font-size: 1.5rem;
@@ -658,7 +663,12 @@
 
 <header>
   <h1>📚 MCQ Learning App</h1>
-  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+    <div class="score-wrap">
+      <span class="score-pill correct-pill">✓ <span id="scoreCorrect">0</span></span>
+      <span class="score-pill wrong-pill">✗ <span id="scoreWrong">0</span></span>
+      <span class="score-pill skip-pill">– <span id="scoreSkipped">0</span></span>
+    </div>
     <button class="shuffle-btn" id="shuffleBtn" title="Shuffle questions">🔀 Shuffle</button>
     <div class="mode-btns">
       <button class="mode-btn active" id="btnQuiz">Quiz</button>
@@ -727,11 +737,6 @@
 
 <!-- Controls -->
 <div class="controls" id="controls">
-  <div class="score-wrap">
-    <span class="score-pill correct-pill">✓ <span id="scoreCorrect">0</span></span>
-    <span class="score-pill wrong-pill">✗ <span id="scoreWrong">0</span></span>
-    <span class="score-pill skip-pill">– <span id="scoreSkipped">0</span></span>
-  </div>
   <div class="jump-wrap">
     <label for="jumpInput">Go to Q:</label>
     <input class="jump-input" id="jumpInput" type="number" min="1" placeholder="…" />

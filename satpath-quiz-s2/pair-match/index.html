@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pair Match — जोड़ी मिलाओ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f172a;
+      --surface:  #1e293b;
+      --surface2: #273549;
+      --accent:   #14b8a6;
+      --accent2:  #2dd4bf;
+      --green:    #22c55e;
+      --red:      #ef4444;
+      --yellow:   #f59e0b;
+      --text:     #f1f5f9;
+      --muted:    #94a3b8;
+      --radius:   14px;
+      --shadow:   0 4px 24px rgba(0,0,0,.5);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 2px solid var(--surface2);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .82rem;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--text); }
+    .topbar h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent2), #818cf8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      background: var(--surface2);
+      border-radius: 99px;
+      height: 6px;
+      overflow: hidden;
+      width: 160px;
+      flex-shrink: 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+    .progress-label {
+      font-size: .78rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── Score pills ── */
+    .score-pills { display: flex; gap: 10px; align-items: center; }
+    .score-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+    .correct-pill { background: rgba(34,197,94,.15);  color: var(--green); }
+    .wrong-pill   { background: rgba(239,68,68,.15);  color: var(--red); }
+    .skip-pill    { background: rgba(245,158,11,.15); color: var(--yellow); }
+
+    /* ── Main card area ── */
+    .main {
+      max-width: 860px;
+      margin: 36px auto 0;
+      padding: 0 16px;
+    }
+
+    /* ── Question card ── */
+    .q-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 28px 24px;
+      margin-bottom: 24px;
+      /* Isolate repaints inside the card from the rest of the page */
+      contain: layout style;
+    }
+    .q-num {
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 14px;
+    }
+    .q-instruction {
+      font-size: .88rem;
+      color: var(--muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    /* ── Two-column match layout ── */
+    .match-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 580px) {
+      .match-grid { grid-template-columns: 1fr; }
+    }
+
+    .col-label {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* ── Left-side rows ── */
+    .left-col { display: flex; flex-direction: column; gap: 8px; }
+    .left-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface2);
+      border: 2px solid rgba(45,212,191,.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: default;
+      min-height: 48px;
+    }
+    .left-item .idx-badge {
+      background: rgba(45,212,191,.15);
+      color: var(--accent2);
+      border-radius: 6px;
+      font-size: .72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      flex-shrink: 0;
+    }
+
+    /* ── Right-side drop targets ── */
+    .right-col { display: flex; flex-direction: column; gap: 8px; }
+    .right-drop {
+      min-height: 48px;
+      background: var(--surface2);
+      border: 2px dashed rgba(45,212,191,.3);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      /* Only transition border-color — no background transition to avoid 23× repaint */
+      transition: border-color .15s;
+      cursor: pointer;
+      position: relative;
+      contain: layout style;
+    }
+    .right-drop:hover:not(.locked) { border-color: var(--accent2); }
+    .right-drop.drag-over {
+      border-color: var(--accent2);
+      background: rgba(45,212,191,.1);
+    }
+    .right-drop.correct-drop { border-color: var(--green); background: rgba(34,197,94,.08); }
+    .right-drop.wrong-drop   { border-color: var(--red);   background: rgba(239,68,68,.08); }
+    .right-drop .drop-placeholder {
+      color: var(--muted);
+      font-size: .8rem;
+      font-style: italic;
+      user-select: none;
+    }
+    .right-drop .drop-left-idx {
+      font-size: .7rem;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Pool of right-side tiles ── */
+    .pool-section { margin-bottom: 22px; }
+    .pool-section .col-label { margin-bottom: 10px; }
+    .pool-zone {
+      min-height: 52px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-start;
+      background: rgba(15,23,42,.4);
+      border: 2px dashed rgba(45,212,191,.18);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    /* ── Tiles ── */
+    .tile {
+      background: var(--surface2);
+      border: 2px solid rgba(45,212,191,.3);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      /* NO transform/box-shadow transitions — they cause GPU layer overflow with 23+ tiles */
+      transition: border-color .15s, background .15s, color .15s, opacity .15s;
+      touch-action: manipulation;
+      /* Each tile gets its own paint layer hint so hover doesn't repaint neighbours */
+      will-change: border-color, background;
+      contain: layout style;
+    }
+    .tile:hover:not(.locked-tile)  { border-color: var(--accent2); background: rgba(45,212,191,.07); }
+    .tile:active:not(.locked-tile) { opacity: .7; }
+    .tile.dragging      { opacity: .35; }
+    .tile.placed-tile   { border-color: rgba(45,212,191,.6); background: rgba(45,212,191,.1); }
+    .tile.correct-tile  { border-color: var(--green); background: rgba(34,197,94,.18); color: var(--green); cursor: default; }
+    .tile.wrong-tile    { border-color: var(--red);   background: rgba(239,68,68,.18);  color: var(--red);   cursor: default; }
+    .tile.locked-tile   { cursor: default; }
+
+    /* ── Selection mode highlight ── */
+    .tile.selected {
+      border-color: var(--yellow);
+      border-style: solid;
+      background: rgba(245,158,11,.18);
+      color: var(--yellow);
+      /* No transform — avoids compositor layer explosion */
+    }
+    .right-drop.awaiting-tile {
+      border-color: var(--yellow);
+      border-style: solid;
+      background: rgba(245,158,11,.06);
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .btn {
+      padding: 9px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+    }
+    .btn:active { transform: scale(.96); }
+    .btn:disabled { opacity: .35; cursor: default; }
+    .btn-primary   { background: var(--accent);   color: #fff; }
+    .btn-secondary { background: var(--surface2); color: var(--text); }
+    .btn-green     { background: rgba(34,197,94,.2);  color: var(--green); border: 1.5px solid var(--green); }
+    .btn-red       { background: rgba(239,68,68,.15); color: var(--red);   border: 1.5px solid var(--red); }
+    .btn-yellow    { background: rgba(245,158,11,.15);color: var(--yellow);border: 1.5px solid var(--yellow); }
+
+    /* ── Feedback banner ── */
+    .feedback {
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: .88rem;
+      font-weight: 600;
+      line-height: 1.6;
+      margin-top: 16px;
+      display: none;
+    }
+    .feedback.correct { background: rgba(34,197,94,.12); border: 1.5px solid var(--green); color: var(--green);  display: block; }
+    .feedback.wrong   { background: rgba(239,68,68,.12); border: 1.5px solid var(--red);   color: var(--red);    display: block; }
+    .feedback.partial { background: rgba(245,158,11,.12);border: 1.5px solid var(--yellow);color: var(--yellow); display: block; }
+
+    /* ── Nav row ── */
+    .nav-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .nav-row .spacer { flex: 1; }
+
+    /* ── Result screen ── */
+    #resultScreen {
+      display: none;
+      max-width: 860px;
+      margin: 36px auto 0;
+      padding: 0 16px;
+    }
+    .result-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .result-summary {
+      padding: 28px 28px 20px;
+      display: flex;
+      gap: 28px;
+      flex-wrap: wrap;
+      align-items: center;
+      border-bottom: 2px solid var(--surface2);
+    }
+    .result-stat { display: flex; flex-direction: column; align-items: center; }
+    .result-num  { font-size: 2rem; font-weight: 800; }
+    .result-lbl  { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .result-body {
+      max-height: 520px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--surface2) transparent;
+    }
+    .result-body::-webkit-scrollbar       { width: 4px; }
+    .result-body::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 99px; }
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .84rem;
+    }
+    .result-table th {
+      background: var(--surface2);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .result-table td { padding: 11px 14px; border-bottom: 1px solid var(--surface2); vertical-align: top; }
+    .result-table tr:last-child td { border-bottom: none; }
+    .badge-correct { color: var(--green);  font-weight: 700; }
+    .badge-wrong   { color: var(--red);    font-weight: 700; }
+    .badge-partial { color: var(--yellow); font-weight: 700; }
+    .badge-skipped { color: var(--yellow); font-weight: 700; }
+    .ans-text      { color: var(--accent2); font-size: .82rem; }
+    .sno-badge {
+      display: inline-block;
+      background: var(--surface2);
+      border-radius: 6px;
+      padding: 1px 8px;
+      font-size: .75rem;
+      color: var(--muted);
+      margin-right: 6px;
+    }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      color: var(--text);
+      padding: 11px 22px;
+      border-radius: 10px;
+      font-size: .9rem;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+      z-index: 999;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 540px) {
+      .q-card  { padding: 20px 14px 18px; }
+      .topbar  { padding: 12px 14px; }
+      .tile    { font-size: .82rem; padding: 7px 11px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="back-link" href="../index.html">← Home</a>
+    <h1>🔗 ग्रंथ उठाओ – जोड़ी मिलाओ</h1>
+  </div>
+  <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+    <div class="score-pills">
+      <span class="score-pill correct-pill">✓ <span id="scCorrect">0</span></span>
+      <span class="score-pill wrong-pill">✗ <span id="scWrong">0</span></span>
+      <span class="score-pill skip-pill">– <span id="scSkipped">0</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <span class="progress-label" id="progressLabel">0 / 0</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Quiz screen ── -->
+<div class="main" id="quizScreen">
+  <div class="q-card" id="qCard">
+    <div class="q-num" id="qNum">Question 1</div>
+    <div class="q-instruction" id="qInstruction"></div>
+
+    <!-- Match grid: Left column + Right drop targets -->
+    <div class="match-grid" id="matchGrid">
+      <div>
+        <div class="col-label">स्तंभ — अ (बाएँ)</div>
+        <div class="left-col" id="leftCol"></div>
+      </div>
+      <div>
+        <div class="col-label">स्तंभ — ब ← यहाँ रखें</div>
+        <div class="right-col" id="rightCol"></div>
+      </div>
+    </div>
+
+    <!-- Pool of unplaced right-side tiles -->
+    <div class="pool-section">
+      <div class="col-label">🗃️ विकल्प — यहाँ से उठाएँ</div>
+      <div class="pool-zone" id="poolZone"></div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback" id="feedback"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn btn-primary"   id="checkBtn">✔ Check</button>
+      <button class="btn btn-secondary" id="clearBtn">↺ Reset</button>
+      <button class="btn btn-yellow"    id="revealBtn">💡 Reveal</button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="prevBtn">← Prev</button>
+      <span class="spacer"></span>
+      <button class="btn btn-secondary" id="nextBtn">Next →</button>
+      <button class="btn btn-red"       id="finishBtn">✓ Finish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Result screen ── -->
+<div id="resultScreen">
+  <div class="result-card">
+    <div class="result-summary" id="resultSummary"></div>
+    <div class="result-body">
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>बाएँ</th>
+            <th>आपका उत्तर</th>
+            <th>सही उत्तर</th>
+            <th>स्थिति</th>
+          </tr>
+        </thead>
+        <tbody id="resultTbody"></tbody>
+      </table>
+    </div>
+    <div style="padding:18px 24px;border-top:2px solid var(--surface2);">
+      <button class="btn btn-primary" id="restartBtn">🔄 पुनः खेलें</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ── -->
+<div id="toast"></div>
+
+<script src="questions4.js"></script>
+<script src="engine.js"></script>
+</body>
+</html>
