@@ -30,9 +30,8 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 24px 16px 60px;
-      padding-top: 16px;
+      align-items: stretch;
+      padding: 0 0 60px;
     }
 
     /* ── Header ── */
@@ -49,6 +48,31 @@
       position: sticky;
       top: 0;
       z-index: 20;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .82rem;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .resume-banner,
+    .progress-wrap,
+    .voice-bar,
+    .card,
+    .flashcard-wrap,
+    .controls,
+    #result-screen {
+      width: min(740px, calc(100% - 32px));
+      margin-left: auto;
+      margin-right: auto;
     }
     header h1 {
       font-size: 1.5rem;
@@ -80,8 +104,8 @@
 
     /* ── Progress bar ── */
     .progress-wrap {
-      width: 100%;
-      max-width: 740px;
+      max-width: none;
+      margin-top: 16px;
       margin-bottom: 20px;
     }
     .progress-info {
@@ -106,8 +130,7 @@
 
     /* ── Card ── */
     .card {
-      width: 100%;
-      max-width: 740px;
+      max-width: none;
       background: var(--surface);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -211,8 +234,7 @@
     /* ── Flashcard mode ── */
     .flashcard-wrap {
       perspective: 1200px;
-      width: 100%;
-      max-width: 740px;
+      max-width: none;
       height: 280px;
       cursor: pointer;
     }
@@ -263,8 +285,7 @@
 
     /* ── Bottom controls ── */
     .controls {
-      width: 100%;
-      max-width: 740px;
+      max-width: none;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -308,8 +329,7 @@
     /* ── Result screen ── */
     #result-screen {
       display: none;
-      width: 100%;
-      max-width: 740px;
+      max-width: none;
       background: var(--surface);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -421,8 +441,7 @@
     /* ── Resume banner ── */
     .resume-banner {
       display: none;
-      width: 100%;
-      max-width: 740px;
+      max-width: none;
       background: linear-gradient(135deg, #1e293b, #1b2d3b);
       border: 2px solid var(--accent);
       border-radius: var(--radius);
@@ -562,8 +581,7 @@
 
     /* ── Voice bar ── */
     .voice-bar {
-      width: 100%;
-      max-width: 740px;
+      max-width: none;
       background: var(--surface);
       border-radius: var(--radius);
       border: 2px solid var(--surface2);
@@ -662,7 +680,10 @@
 <body>
 
 <header>
-  <h1>📚 MCQ Learning App</h1>
+  <div class="header-left">
+    <a class="back-link" href="../index.html">← Home</a>
+    <h1>📚 वस्तुनिष्ठ प्रश्न</h1>
+  </div>
   <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
     <div class="score-wrap">
       <span class="score-pill correct-pill">✓ <span id="scoreCorrect">0</span></span>

@@ -298,6 +298,43 @@
       margin-right: 6px;
     }
 
+    /* ── Resume banner ── */
+    .resume-banner {
+      display: none;
+      max-width: 720px;
+      margin: 18px auto 0;
+      padding: 0 16px;
+    }
+    .resume-banner-inner {
+      background: linear-gradient(135deg, var(--surface), #1b2d3b);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow);
+    }
+    .resume-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .resume-text { flex: 1; min-width: 180px; }
+    .resume-text strong { display: block; font-size: .98rem; color: var(--accent2); margin-bottom: 3px; }
+    .resume-text span   { font-size: .8rem; color: var(--muted); }
+    .resume-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .resume-yes-btn {
+      padding: 7px 18px; border-radius: 8px; border: none;
+      background: var(--accent); color: #fff;
+      font-size: .85rem; font-weight: 700; cursor: pointer;
+    }
+    .resume-yes-btn:hover { opacity: .85; }
+    .resume-no-btn {
+      padding: 7px 14px; border-radius: 8px;
+      border: 2px solid var(--surface2); background: transparent;
+      color: var(--muted); font-size: .85rem; font-weight: 600; cursor: pointer;
+    }
+    .resume-no-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── Toast ── */
     /* ── Toast ── */
     #toast {
       position: fixed;
@@ -369,6 +406,21 @@
   </div>
 </div>
 
+<!-- ── Resume banner ── -->
+<div class="resume-banner" id="resumeBanner">
+  <div class="resume-banner-inner">
+    <div class="resume-icon">💾</div>
+    <div class="resume-text">
+      <strong>You have a saved session!</strong>
+      <span id="resumeInfo">…</span>
+    </div>
+    <div class="resume-actions">
+      <button class="resume-yes-btn" id="resumeYesBtn">▶ Resume</button>
+      <button class="resume-no-btn"  id="resumeNoBtn">✕ Discard</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── Quiz screen ── -->
 <div class="main" id="quizScreen">
   <div class="q-card" id="qCard">
@@ -392,7 +444,6 @@
 
     <!-- Controls -->
     <div class="controls" id="controlsRow">
-      <button class="btn btn-primary"   id="checkBtn">✔ Check</button>
       <button class="btn btn-secondary" id="clearBtn">↺ Reset</button>
       <button class="btn btn-yellow"    id="revealBtn">💡 Reveal</button>
     </div>
@@ -419,7 +470,9 @@
           <tr>
             <th>#</th>
             <th>Your Answer</th>
+            <th>Actual Word</th>
             <th>Status</th>
+            <th>Page Ref</th>
           </tr>
         </thead>
         <tbody id="resultTbody"></tbody>
@@ -465,7 +518,6 @@ const dropZone    = document.getElementById('dropZone');
 const dropEmpty   = document.getElementById('dropEmpty');
 const poolZone    = document.getElementById('poolZone');
 const feedback    = document.getElementById('feedback');
-const checkBtn    = document.getElementById('checkBtn');
 const clearBtn    = document.getElementById('clearBtn');
 const revealBtn   = document.getElementById('revealBtn');
 const prevBtn     = document.getElementById('prevBtn');
@@ -477,6 +529,10 @@ const scWrong     = document.getElementById('scWrong');
 const scSkipped   = document.getElementById('scSkipped');
 const progressFill= document.getElementById('progressFill');
 const progressLbl = document.getElementById('progressLabel');
+const resumeBanner   = document.getElementById('resumeBanner');
+const resumeInfo     = document.getElementById('resumeInfo');
+const resumeYesBtn   = document.getElementById('resumeYesBtn');
+const resumeNoBtn    = document.getElementById('resumeNoBtn');
 
 // ════════════════════════════════════════════════════════════
 //  Render
@@ -524,8 +580,8 @@ function renderQuestion(idx) {
   nextBtn.disabled = false;
   nextBtn.textContent = 'Next →';
 
-  // lock tiles if revealed
-  if (revealed[idx]) lockTiles(true);
+  // lock tiles only if revealed; otherwise keep interactive
+  if (revealed[idx]) lockTiles(true, null, true);
   else               lockTiles(false);
 
   updateProgress();
@@ -585,6 +641,9 @@ function onTileClick(zone, idx) {
     const tile = answerTiles.splice(idx, 1)[0];
     poolTiles.push(tile);
   }
+  // persist current tile state
+  answersArr[current] = answerTiles.length > 0 ? [...answerTiles] : null;
+  answers[current]    = answerTiles.length > 0 ? answerTiles.join('') : null;
   // clear feedback on interaction
   feedback.className = 'feedback';
   dropZone.classList.remove('correct-zone', 'wrong-zone');
@@ -615,6 +674,9 @@ function onTileClick(zone, idx) {
       const tile = answerTiles.splice(fromIdx, 1)[0];
       poolTiles.push(tile);
     }
+    // persist current tile state
+    answersArr[current] = answerTiles.length > 0 ? [...answerTiles] : null;
+    answers[current]    = answerTiles.length > 0 ? answerTiles.join('') : null;
     feedback.className = 'feedback';
     dropZone.classList.remove('correct-zone', 'wrong-zone');
     renderTiles();
@@ -626,63 +688,25 @@ function onTileClick(zone, idx) {
 //  Check / Reveal
 // ════════════════════════════════════════════════════════════
 
-checkBtn.addEventListener('click', () => checkAnswer(current));
 clearBtn.addEventListener('click', () => resetTiles(current));
 revealBtn.addEventListener('click', () => revealAnswer(current));
 
-function checkAnswer(idx) {
-  const q = questions[idx];
-  if (!q.answer) {
-    showToast('Answer not available for this question.');
-    return;
-  }
-  if (answerTiles.length === 0) {
-    showToast('Place some tiles first');
-    return;
-  }
-
-  const userAnswer = answerTiles.join('');
-  const correct    = q.answer.replace(/\s+/g, '');
-  const isCorrect  = userAnswer === correct;
-
-  // store
-  answersArr[idx] = [...answerTiles];
-  answers[idx]    = userAnswer;
-
-  if (isCorrect) {
-    feedback.className = 'feedback correct';
-    feedback.innerHTML = '✓ Correct! <span style="color:var(--muted);font-weight:400;font-size:.85rem;">' + q.answer + '</span>';
-    dropZone.classList.add('correct-zone');
-    dropZone.classList.remove('wrong-zone');
-    lockTiles(true, true);
-  } else {
-    feedback.className = 'feedback wrong';
-    feedback.innerHTML = '✗ Wrong. Correct answer: <span style="color:var(--green);font-weight:700;">' + q.answer + '</span>';
-    dropZone.classList.add('wrong-zone');
-    dropZone.classList.remove('correct-zone');
-    lockTiles(true, false);
-  }
-
-  recalcScore();
-  updateScorePills();
-  saveSession();
-}
-
 function revealAnswer(idx) {
   const q = questions[idx];
-  if (!q.answer) { showToast('Answer not available'); return; }
+  if (!q.answer || q.answer.length === 0) { showToast('Answer not available'); return; }
 
   revealed[idx] = true;
 
   // place tiles in correct order
-  const correctLetters = q.answer ? splitToOriginalTiles(q, q.answer) : q.letters;
+  const correctLetters = q.answer.length > 0 ? [...q.answer] : q.letters;
   answerTiles = correctLetters;
   poolTiles   = [];
   answersArr[idx] = [...answerTiles];
   answers[idx]    = answerTiles.join('');
 
+  const actualWordHtml = q.actualWord ? ' <span style="color:var(--accent2);font-size:.82rem;font-style:italic;">(' + q.actualWord + ')</span>' : '';
   feedback.className = 'feedback correct';
-  feedback.innerHTML = '💡 Answer: <span style="color:var(--green);font-weight:700;">' + q.answer + '</span>';
+  feedback.innerHTML = '💡 Answer: <span style="color:var(--green);font-weight:700;">' + q.answer.join(' ') + '</span>' + actualWordHtml;
   dropZone.classList.add('correct-zone');
   dropZone.classList.remove('wrong-zone');
 
@@ -721,14 +745,17 @@ function splitToOriginalTiles(q, answer) {
 }
 
 function resetTiles(idx) {
-  if (revealed[idx]) return;
   const q = questions[idx];
-  poolTiles   = shuffle([...q.letters]);
-  answerTiles = [];
+  revealed[idx]   = false;
+  poolTiles       = [...q.letters];  // original order, no shuffle
+  answerTiles     = [];
   answersArr[idx] = null;
   answers[idx]    = null;
   feedback.className = 'feedback';
+  feedback.innerHTML = '';
   dropZone.classList.remove('correct-zone', 'wrong-zone');
+  revealBtn.disabled = false;
+  clearBtn.disabled  = false;
   renderTiles();
   recalcScore();
   updateScorePills();
@@ -746,36 +773,22 @@ function lockTiles(lock, isCorrect, isRevealed) {
       else if (isCorrect === false) t.classList.add('wrong-tile');
     }
   });
-  // Disable buttons while checked/revealed
+  // Disable reveal while answer is locked; Reset is always enabled
   const locked = lock && (isCorrect !== undefined || isRevealed);
-  checkBtn.disabled  = locked;
   revealBtn.disabled = locked;
-  clearBtn.disabled  = revealed[current] && locked;
+  clearBtn.disabled  = false;
 }
 
 function updateFeedbackFromState(idx) {
-  if (answers[idx] === null) return;
+  if (!revealed[idx]) return;   // only restore UI for revealed questions
   const q = questions[idx];
-  if (!q.answer) return;
-  const correct = q.answer.replace(/\s+/g, '');
-  const isOk = answers[idx] === correct || revealed[idx];
-  if (revealed[idx]) {
-    feedback.className = 'feedback correct';
-    feedback.innerHTML = '💡 Answer: <span style="color:var(--green);font-weight:700;">' + q.answer + '</span>';
-    dropZone.classList.add('correct-zone');
-  } else if (isOk) {
-    feedback.className = 'feedback correct';
-    feedback.innerHTML = '✓ Correct! <span style="color:var(--muted);font-weight:400;font-size:.85rem;">' + q.answer + '</span>';
-    dropZone.classList.add('correct-zone');
-    lockTiles(true, true);
-  } else {
-    feedback.className = 'feedback wrong';
-    feedback.innerHTML = '✗ Wrong. Correct answer: <span style="color:var(--green);font-weight:700;">' + q.answer + '</span>';
-    dropZone.classList.add('wrong-zone');
-    lockTiles(true, false);
-  }
-  checkBtn.disabled  = true;
+  const answerDisplay = q.answer && q.answer.length > 0 ? q.answer.join(' ') : '';
+  const actualWordHtml = q.actualWord ? ' <span style="color:var(--accent2);font-size:.82rem;font-style:italic;">(' + q.actualWord + ')</span>' : '';
+  feedback.className = 'feedback correct';
+  feedback.innerHTML = '💡 Answer: <span style="color:var(--green);font-weight:700;">' + answerDisplay + '</span>' + actualWordHtml;
+  dropZone.classList.add('correct-zone');
   revealBtn.disabled = true;
+  clearBtn.disabled  = false;
 }
 
 // ════════════════════════════════════════════════════════════
@@ -797,10 +810,12 @@ finishBtn.addEventListener('click', showResult);
 function recalcScore() {
   let c = 0, w = 0;
   questions.forEach((q, i) => {
-    if (answers[i] === null) return;
-    if (!q.answer) return;
-    const correct = q.answer.replace(/\s+/g, '');
-    if (answers[i] === correct) c++;
+    if (answersArr[i] === null) return;
+    if (!q.answer || q.answer.length === 0) return;
+    const isOk = answersArr[i] &&
+                 answersArr[i].length === q.answer.length &&
+                 answersArr[i].every((t, j) => t === q.answer[j]);
+    if (isOk) c++;
     else if (!revealed[i]) w++;
   });
   score.correct = c;
@@ -848,25 +863,40 @@ function showResult() {
     const tr = document.createElement('tr');
     let statusHtml, answerHtml;
 
-    if (answers[i] === null) {
+    const isOk = q.answer && q.answer.length > 0 && answersArr[i] &&
+                 answersArr[i].length === q.answer.length &&
+                 answersArr[i].every((t, j) => t === q.answer[j]);
+    if (answersArr[i] === null) {
       statusHtml = '<span class="badge-skipped">○ Skipped</span>';
       answerHtml = '<span style="color:var(--muted)">—</span>';
     } else if (revealed[i]) {
       statusHtml = '<span style="color:var(--accent2);font-weight:700;">💡 Revealed</span>';
       answerHtml = '<span class="ans-text">' + (answersArr[i] || []).join(' ') + '</span>';
-    } else if (q.answer && answers[i] === q.answer.replace(/\s+/g, '')) {
+    } else if (isOk) {
       statusHtml = '<span class="badge-correct">✓ Correct</span>';
       answerHtml = '<span class="ans-text">' + (answersArr[i] || []).join(' ') + '</span>';
     } else {
       statusHtml = '<span class="badge-wrong">✗ Wrong</span>';
-      answerHtml = '<span class="ans-text">' + (answersArr[i] || []).join(' ') + '</span>'
-        + (q.answer ? '<br><span style="color:var(--green);font-size:.78rem;">Correct: ' + q.answer + '</span>' : '');
+      answerHtml = answersArr[i] && answersArr[i].length > 0
+        ? '<span class="ans-text">' + answersArr[i].join(' ') + '</span>'
+        : '<span style="color:var(--muted)">—</span>';
     }
+    const actualWordHtml = q.actualWord
+      ? '<span style="color:var(--accent2);font-weight:600;">' + q.actualWord + '</span>'
+        + (q.answer && q.answer.length > 0 ? '<br><span style="color:var(--muted);font-size:.75rem;">' + q.answer.join(' ') + '</span>' : '')
+      : (q.answer && q.answer.length > 0
+          ? '<span style="color:var(--muted);font-size:.78rem;">' + q.answer.join(' ') + '</span>'
+          : '<span style="color:var(--muted)">—</span>');
+    const refHtml = q.reference
+      ? '<span style="color:var(--accent2);font-size:.78rem;">' + q.reference + '</span>'
+      : '<span style="color:var(--muted)">—</span>';
 
     tr.innerHTML = `
       <td><span class="sno-badge">${q.sno}</span></td>
       <td>${answerHtml}</td>
+      <td>${actualWordHtml}</td>
       <td>${statusHtml}</td>
+      <td>${refHtml}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -936,23 +966,44 @@ function init() {
   revealed   = Array(TOTAL).fill(false);
   score      = { correct: 0, wrong: 0 };
 
+  resumeBanner.style.display = 'none';
   quizScreen.style.display = '';
   resultScreen.style.display = 'none';
 
   renderQuestion(0);
 }
 
+function showResumeBanner(session) {
+  const d    = new Date(session.savedAt);
+  const when = d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })
+             + ' ' + d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+  const answered = (session.answers || []).filter(a => a !== null).length;
+  resumeInfo.textContent = `Saved on ${when} · Q${(session.current || 0) + 1} of ${TOTAL} · ${answered} answered`;
+  resumeBanner.style.display = 'block';
+  quizScreen.style.display   = 'none';
+  resultScreen.style.display = 'none';
+}
+
+function restoreSession(session) {
+  resumeBanner.style.display = 'none';
+  current    = session.current    || 0;
+  answers    = session.answers    || Array(TOTAL).fill(null);
+  answersArr = session.answersArr || Array(TOTAL).fill(null);
+  revealed   = session.revealed   || Array(TOTAL).fill(false);
+  score      = session.score      || { correct: 0, wrong: 0 };
+  quizScreen.style.display   = '';
+  resultScreen.style.display = 'none';
+  renderQuestion(current);
+}
+
+resumeYesBtn.addEventListener('click', () => restoreSession(loadSession()));
+resumeNoBtn.addEventListener('click',  () => init());
+
 // Check for saved session
 (function boot() {
   const saved = loadSession();
   if (saved && saved.answers && saved.answers.length === TOTAL) {
-    current    = saved.current    || 0;
-    answers    = saved.answers    || Array(TOTAL).fill(null);
-    answersArr = saved.answersArr || Array(TOTAL).fill(null);
-    revealed   = saved.revealed   || Array(TOTAL).fill(false);
-    score      = saved.score      || { correct: 0, wrong: 0 };
-    renderQuestion(current);
-    showToast('Progress restored ✓');
+    showResumeBanner(saved);
   } else {
     init();
   }

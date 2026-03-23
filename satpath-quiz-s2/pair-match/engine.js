@@ -18,21 +18,20 @@ let userMaps   = Array(TOTAL).fill(null);
 let revealed   = Array(TOTAL).fill(false);
 let score      = { correct: 0, wrong: 0, partial: 0 };
 let dropSlots  = {};   // li → ri | null
-let poolOrder  = [];   // ri values currently visible in pool
+let poolOrder  = [];   // fixed row order for right-side options
 let selectedRi = null; // ri selected from pool (click-mode)
 
 // ── stable DOM node caches — rebuilt once per question ────
-let slotEls = [];  // slotEls[li] = .right-drop div
-let poolEls = {};  // poolEls[ri] = .tile span
+let slotEls = [];      // slotEls[li] = .right-drop div
+let poolEls = {};      // poolEls[ri] = .tile span
+let poolCellEls = [];  // poolCellEls[row] = .pool-cell div
 
 // ── static DOM refs ───────────────────────────────────────
 const quizScreen   = document.getElementById('quizScreen');
 const resultScreen = document.getElementById('resultScreen');
 const qNum         = document.getElementById('qNum');
 const qInstruction = document.getElementById('qInstruction');
-const leftCol      = document.getElementById('leftCol');
-const rightCol     = document.getElementById('rightCol');
-const poolZone     = document.getElementById('poolZone');
+const matchBody    = document.getElementById('matchBody');
 const feedback     = document.getElementById('feedback');
 const checkBtn     = document.getElementById('checkBtn');
 const clearBtn     = document.getElementById('clearBtn');
@@ -47,31 +46,6 @@ const scSkipped    = document.getElementById('scSkipped');
 const progressFill = document.getElementById('progressFill');
 const progressLbl  = document.getElementById('progressLabel');
 
-// ── Pool zone drop/dragover — attached ONCE at startup ────
-poolZone.addEventListener('dragover', e => {
-  e.preventDefault();
-  poolZone.style.borderColor = 'var(--accent2)';
-});
-poolZone.addEventListener('dragleave', () => {
-  poolZone.style.borderColor = '';
-});
-poolZone.addEventListener('drop', e => {
-  e.preventDefault();
-  poolZone.style.borderColor = '';
-  if (isLocked()) return;
-  let d = null;
-  try { d = JSON.parse(e.dataTransfer.getData('text/plain')); } catch {}
-  if (!d || d.from !== 'slot') return;
-  const li = Number(d.li);
-  const ri = dropSlots[li];
-  if (ri === null || ri === undefined) return;
-  dropSlots[li] = null;
-  if (!poolOrder.includes(ri)) poolOrder.push(ri);
-  selectedRi = null;
-  syncAll();
-  scheduleSave();
-});
-
 // ════════════════════════════════════════════════════════════
 //  buildDOM — called ONCE per question.
 //  Creates all left items, slot containers and pool tile
@@ -80,22 +54,22 @@ poolZone.addEventListener('drop', e => {
 function buildDOM(q) {
   slotEls = [];
   poolEls = {};
-  leftCol.innerHTML  = '';
-  rightCol.innerHTML = '';
-  poolZone.innerHTML = '';
+  poolCellEls = [];
+  matchBody.innerHTML = '';
 
-  // Left items — static labels, no interaction
+  // Build strict table rows: left | answer slot | option cell.
   q.left.forEach((text, li) => {
-    const div = document.createElement('div');
-    div.className = 'left-item';
-    div.innerHTML =
+    const tr = document.createElement('tr');
+
+    const tdLeft = document.createElement('td');
+    const left = document.createElement('div');
+    left.className = 'left-item';
+    left.innerHTML =
       '<span class="idx-badge">' + (li + 1) + '</span>' +
       '<span>' + esc(text) + '</span>';
-    leftCol.appendChild(div);
-  });
+    tdLeft.appendChild(left);
 
-  // Right drop slots — one listener set per slot, never re-added
-  q.left.forEach((_, li) => {
+    const tdDrop = document.createElement('td');
     const slot = document.createElement('div');
     slot.className = 'right-drop';
 
@@ -119,11 +93,42 @@ function buildDOM(q) {
       if (d) handleDrop(d, li);
     });
 
-    rightCol.appendChild(slot);
+    tdDrop.appendChild(slot);
     slotEls[li] = slot;
+
+    const tdPool = document.createElement('td');
+    const poolCell = document.createElement('div');
+    poolCell.className = 'pool-cell';
+    poolCell.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!isLocked()) poolCell.classList.add('drag-over');
+    });
+    poolCell.addEventListener('dragleave', () => poolCell.classList.remove('drag-over'));
+    poolCell.addEventListener('drop', e => {
+      e.preventDefault();
+      poolCell.classList.remove('drag-over');
+      if (isLocked()) return;
+      let d = null;
+      try { d = JSON.parse(e.dataTransfer.getData('text/plain')); } catch {}
+      if (!d || d.from !== 'slot') return;
+      const fromLi = Number(d.li);
+      const ri = dropSlots[fromLi];
+      if (ri === null || ri === undefined) return;
+      dropSlots[fromLi] = null;
+      selectedRi = null;
+      syncAll();
+      scheduleSave();
+    });
+    tdPool.appendChild(poolCell);
+    poolCellEls[li] = poolCell;
+
+    tr.appendChild(tdLeft);
+    tr.appendChild(tdDrop);
+    tr.appendChild(tdPool);
+    matchBody.appendChild(tr);
   });
 
-  // Pool tiles — one per right-side option, shown/hidden via display
+  // Pool tiles — one per right-side option.
   q.right.forEach((text, ri) => {
     const el = document.createElement('span');
     el.className   = 'tile';
@@ -140,7 +145,6 @@ function buildDOM(q) {
     });
     el.addEventListener('dragend', () => el.classList.remove('dragging'));
 
-    poolZone.appendChild(el);
     poolEls[ri] = el;
   });
 }
@@ -155,7 +159,11 @@ function syncAll() {
   const q      = questions[current];
   const locked = isLocked();
   const map    = userMaps[current];
-  const inPool = new Set(poolOrder);
+  const usedRIs = new Set();
+  q.left.forEach((_, li) => {
+    const ri = dropSlots[li];
+    if (ri !== null && ri !== undefined) usedRIs.add(ri);
+  });
 
   // Sync each right drop slot
   q.left.forEach((_, li) => {
@@ -198,20 +206,35 @@ function syncAll() {
     }
   });
 
-  // Sync pool tiles — show/hide only, update class
-  q.right.forEach((_, ri) => {
+  // Clear option cells and then place available pool tiles row by row.
+  poolCellEls.forEach(cell => {
+    if (!cell) return;
+    cell.classList.remove('drag-over');
+    cell.innerHTML = '';
+  });
+
+  poolOrder.forEach((ri, row) => {
     const el = poolEls[ri];
-    if (!el) return;
-    if (inPool.has(ri)) {
-      el.style.display = '';
-      let cls = 'tile';
-      if (locked)           cls += ' locked-tile';
-      if (selectedRi === ri) cls += ' selected';
-      el.className = cls;
-    } else {
-      el.style.display = 'none';
-      el.className = 'tile';
+    const cell = poolCellEls[row];
+    if (!cell) return;
+
+    if (usedRIs.has(ri)) {
+      const empty = document.createElement('span');
+      empty.className = 'pool-empty';
+      cell.appendChild(empty);
+      return;
     }
+
+    if (!el) return;
+
+    let cls = 'tile';
+    if (locked) cls += ' locked-tile';
+    if (selectedRi === ri) cls += ' selected';
+
+    el.className = cls;
+    el.style.display = '';
+    el.setAttribute('aria-hidden', 'false');
+    cell.appendChild(el);
   });
 }
 
@@ -248,7 +271,7 @@ function renderQuestion(idx) {
   // Reset state for this question
   dropSlots  = {};
   q.left.forEach((_, li) => { dropSlots[li] = null; });
-  poolOrder  = shuffle(q.right.map((_, ri) => ri));
+  poolOrder  = q.right.map((_, ri) => ri);
   selectedRi = null;
 
   // Re-apply saved answers if any
@@ -256,8 +279,6 @@ function renderQuestion(idx) {
     Object.keys(userMaps[idx]).forEach(li => {
       const ri = userMaps[idx][Number(li)];
       dropSlots[Number(li)] = ri;
-      const pos = poolOrder.indexOf(ri);
-      if (pos !== -1) poolOrder.splice(pos, 1);
     });
   }
 
@@ -285,12 +306,6 @@ function onPoolTileClick(ri) {
 
 function onSlotClick(li) {
   if (isLocked() || selectedRi === null) return;
-  const existing = dropSlots[li];
-  if (existing !== null && existing !== undefined) {
-    if (!poolOrder.includes(existing)) poolOrder.push(existing);
-  }
-  const pos = poolOrder.indexOf(selectedRi);
-  if (pos !== -1) poolOrder.splice(pos, 1);
   dropSlots[li] = selectedRi;
   selectedRi    = null;
   syncAll();
@@ -302,7 +317,6 @@ function onPlacedTileClick(li) {
   const ri = dropSlots[li];
   if (ri === null || ri === undefined) return;
   dropSlots[li] = null;
-  if (!poolOrder.includes(ri)) poolOrder.push(ri);
   selectedRi = null;
   syncAll();
   scheduleSave();
@@ -312,11 +326,6 @@ function handleDrop(d, targetLi) {
   const existingRi = dropSlots[targetLi];
   if (d.from === 'pool') {
     const ri = Number(d.ri);
-    if (existingRi !== null && existingRi !== undefined) {
-      if (!poolOrder.includes(existingRi)) poolOrder.push(existingRi);
-    }
-    const pos = poolOrder.indexOf(ri);
-    if (pos !== -1) poolOrder.splice(pos, 1);
     dropSlots[targetLi] = ri;
   } else if (d.from === 'slot') {
     const fromLi = Number(d.li);
@@ -376,7 +385,6 @@ function revealAnswer(idx) {
   revealed[idx] = true;
   const map = {};
   q.left.forEach((_, li) => { dropSlots[li] = q.answer[li]; map[li] = q.answer[li]; });
-  poolOrder      = [];
   userMaps[idx]  = map;
 
   feedback.className = 'feedback correct';
@@ -394,7 +402,7 @@ function resetQuestion(idx) {
   userMaps[idx] = null;
   dropSlots = {};
   q.left.forEach((_, li) => { dropSlots[li] = null; });
-  poolOrder  = shuffle(q.right.map((_, ri) => ri));
+  poolOrder  = q.right.map((_, ri) => ri);
   selectedRi = null;
   feedback.className   = 'feedback';
   feedback.textContent = '';
